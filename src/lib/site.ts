@@ -19,7 +19,7 @@ function toWhatsappHref(value: string | undefined): string | undefined {
   return `https://wa.me/${raw.replace(/\D/g, '')}`;
 }
 
-export const siteUrl = present(PUBLIC_SITE_URL) ?? 'https://aqsan.dev';
+export const siteUrl = present(PUBLIC_SITE_URL) ?? 'https://aqsan.vercel.app';
 export const siteName = 'Aqsan.dev';
 export const authorName = 'Muhammad Raffi Aqsan';
 export const authorRole = 'Junior Software Developer & IT Support Technician';

@@ -152,7 +152,7 @@ cp .env.example .env
 Open `.env` and fill in your details:
 
 ```env
-PUBLIC_SITE_URL=https://aqsan.dev
+PUBLIC_SITE_URL=https://aqsan.vercel.app
 PUBLIC_EMAIL=your-email@example.com
 PUBLIC_GITHUB_URL=https://github.com/your-username
 PUBLIC_LINKEDIN_URL=https://www.linkedin.com/in/your-profile
@@ -213,7 +213,7 @@ This site builds to pure static HTML/CSS/JS and can be deployed anywhere without
 
 ## 📬 Connect
 
-- **Website**: [aqsan.dev](https://aqsan.vercel.app)
+- **Website**: [aqsan.vercel.app](https://aqsan.vercel.app)
 - **GitHub**: [@NojinNojs](https://github.com/NojinNojs)
 - **LinkedIn**: [Muhammad Raffi Aqsan](https://www.linkedin.com/in/raffiaqsan/)
 - **Email**: [aqsan@proton.me](mailto:aqsan@proton.me)

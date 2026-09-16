@@ -1,6 +1,6 @@
-# Robots.txt for https://aqsan.dev
+# Robots.txt for https://aqsan.vercel.app
 User-agent: *
 Allow: /
 
 # Sitemaps
-Sitemap: https://aqsan.dev/sitemap-index.xml
+Sitemap: https://aqsan.vercel.app/sitemap-index.xml
