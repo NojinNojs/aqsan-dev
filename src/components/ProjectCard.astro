@@ -1,0 +1,253 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { Icon } from 'astro-icon/components';
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+  index: number;
+}
+
+const { project, index } = Astro.props;
+const displayIndex = String(index + 1).padStart(2, '0');
+---
+
+<a href={`/projects/${project.id}`} class="project-card" data-tilt>
+  <!-- Background huge number -->
+  <div class="bg-number mono" aria-hidden="true">{displayIndex}</div>
+  
+  <div class="card-content">
+    <div class="card-header">
+      <div class="card-number mono">
+        <span class="num-slash">/</span>{displayIndex}
+      </div>
+      <div class="icon-wrap">
+        <Icon name="lucide:arrow-up-right" class="arrow-icon" />
+      </div>
+    </div>
+
+    <div class="card-body">
+      <h3 class="heading-2 card-title">{project.data.title}</h3>
+      <p class="body-sm card-desc">{project.data.description}</p>
+    </div>
+
+    <div class="card-footer">
+      <div class="tech-tags">
+        {project.data.techStack.slice(0, 4).map(tech => (
+          <span class="tech mono">{tech}</span>
+        ))}
+        {project.data.techStack.length > 4 && (
+          <span class="tech mono">+{project.data.techStack.length - 4}</span>
+        )}
+      </div>
+    </div>
+  </div>
+
+  <div class="card-glow" aria-hidden="true"></div>
+</a>
+
+<style>
+  .project-card {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    border-radius: var(--radius-2xl);
+    overflow: hidden;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    transition: all 0.5s var(--ease-out-expo);
+    height: 100%;
+    min-height: 300px;
+  }
+
+  .bg-number {
+    position: absolute;
+    top: -15px;
+    right: -5px;
+    font-size: 7rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    opacity: 0.03;
+    line-height: 1;
+    pointer-events: none;
+    transition: transform 0.8s var(--ease-out-expo), opacity 0.8s var(--ease-out-expo);
+    z-index: 0;
+  }
+
+  @media (hover: hover) {
+    .project-card:hover {
+      border-color: var(--border-hover);
+      box-shadow: 0 20px 40px -10px rgba(0,0,0,0.3);
+    }
+    
+    .project-card:hover .bg-number {
+      transform: scale(1.1) translate(-6px, 6px);
+      opacity: 0.06;
+    }
+  }
+
+  .card-content {
+    display: flex;
+    flex-direction: column;
+    padding: var(--space-xl);
+    height: 100%;
+    position: relative;
+    z-index: 2;
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-lg);
+  }
+
+  .card-number {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+  }
+
+  .num-slash {
+    opacity: 0.4;
+  }
+
+  .icon-wrap {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.5s var(--ease-out-expo);
+  }
+
+  .arrow-icon {
+    width: 17px;
+    height: 17px;
+    color: var(--text-secondary);
+    transition: all 0.5s var(--ease-out-expo);
+  }
+
+  @media (hover: hover) {
+    .project-card:hover .icon-wrap {
+      background: var(--text-primary);
+      border-color: var(--text-primary);
+    }
+
+    .project-card:hover .arrow-icon {
+      color: var(--bg-primary);
+      transform: translate(2px, -2px) scale(1.1);
+    }
+  }
+
+  .card-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: var(--space-lg);
+  }
+
+  .card-title {
+    font-size: clamp(1.25rem, 1.6vw, 1.5rem);
+    margin-bottom: var(--space-sm);
+    letter-spacing: -0.02em;
+    line-height: 1.3;
+  }
+
+  .card-desc {
+    color: var(--text-secondary);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-height: 1.6;
+    font-size: 0.9rem;
+    margin-bottom: 0;
+  }
+
+  .card-footer {
+    margin-top: auto;
+  }
+
+  .tech-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .tech {
+    padding: 0.25rem 0.65rem;
+    border-radius: var(--radius-full);
+    background: var(--accent-subtle);
+    color: var(--text-secondary);
+    font-size: 0.7rem;
+    border: 1px solid transparent;
+    transition: all 0.3s ease;
+  }
+
+  @media (hover: hover) {
+    .project-card:hover .tech {
+      border-color: var(--border-hover);
+      color: var(--text-primary);
+    }
+  }
+
+  .card-glow {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% -20%, var(--accent-glow) 0%, transparent 60%);
+    opacity: 0;
+    transition: opacity 0.8s ease;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  @media (hover: hover) {
+    .project-card:hover .card-glow {
+      opacity: 0.8;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .card-content {
+      padding: var(--space-xl);
+    }
+    .card-title {
+      font-size: 2rem;
+    }
+    .project-card {
+      min-height: 320px;
+    }
+  }
+</style>
+
+<script>
+  import gsap from 'gsap';
+
+  document.addEventListener('astro:page-load', () => {
+    if (!window.matchMedia('(hover: hover)').matches) return;
+    const cards = document.querySelectorAll('.project-card[data-tilt]');
+    cards.forEach(card => {
+      const handleMouseMove = (e: any) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left - rect.width / 2;
+        const y = e.clientY - rect.top - rect.height / 2;
+        
+        gsap.to(card, {
+          rotateY: x * 0.04,
+          rotateX: -y * 0.04,
+          transformPerspective: 1000,
+          transformOrigin: 'center center',
+          ease: 'power2.out',
+          duration: 0.5
+        });
+      };
+      const handleMouseLeave = () => {
+        gsap.to(card, { rotateY: 0, rotateX: 0, duration: 0.8, ease: 'elastic.out(1, 0.3)' });
+      };
+      card.addEventListener('mousemove', handleMouseMove);
+      card.addEventListener('mouseleave', handleMouseLeave);
+    });
+  });
+</script>

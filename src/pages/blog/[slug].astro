@@ -1,0 +1,546 @@
+---
+import { getCollection, render } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import { Icon } from 'astro-icon/components';
+import { socials } from '../../lib/site';
+
+export async function getStaticPaths() {
+  const blogEntries = await getCollection('blog');
+  const sorted = blogEntries.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+  
+  return sorted.map((entry, index) => ({
+    params: { slug: entry.id },
+    props: { 
+      entry,
+      prevPost: index > 0 ? sorted[index - 1] : null,
+      nextPost: index < sorted.length - 1 ? sorted[index + 1] : null
+    },
+  }));
+}
+
+const { entry, prevPost, nextPost } = Astro.props;
+const { Content } = await render(entry);
+
+const formattedDate = entry.data.pubDate.toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+
+// Dynamic reading time estimate (approx 200 words per minute)
+const wordCount = (entry.body || '').split(/\s+/).length;
+const readTime = Math.max(1, Math.ceil(wordCount / 200));
+---
+
+<Layout 
+  title={`${entry.data.title} | Blog`}
+  description={entry.data.description}
+  article={true}
+  publishDate={entry.data.pubDate}
+>
+  <!-- Reading Progress -->
+  <div class="reading-progress-container">
+    <div class="reading-progress-bar"></div>
+  </div>
+
+  <article class="blog-post">
+    <!-- Hero Section -->
+    <header class="post-hero section container">
+      <div class="hero-content">
+        <div class="nav-breadcrumbs">
+          <a href="/blog" class="back-link mono">
+            <Icon name="lucide:arrow-left" /> All Articles
+          </a>
+          <span class="sep">/</span>
+          <span class="read-estimate mono">{readTime} min read</span>
+        </div>
+        
+        <div class="meta-tags">
+          {entry.data.tags.map(tag => (
+            <span class="tag mono">{tag}</span>
+          ))}
+        </div>
+
+        <h1 class="display title blog-title">{entry.data.title}</h1>
+        <p class="body-lg subtitle">{entry.data.description}</p>
+        
+        <div class="meta-bottom">
+          <div class="author-snippet">
+            <div class="author-avatar mono">RA</div>
+            <div class="author-info">
+              <span class="author-name">Muhammad Raffi Aqsan</span>
+              <time datetime={entry.data.pubDate.toISOString()} class="mono date">
+                {formattedDate}
+              </time>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+    
+    <!-- Content Section -->
+    <div class="container section pt-0">
+      <div class="prose content-prose">
+        <Content />
+      </div>
+
+      <!-- Author Bio Box -->
+      <div class="author-bio-card">
+        <div class="bio-avatar mono">RA</div>
+        <div class="bio-content">
+          <h4 class="bio-name">Muhammad Raffi Aqsan</h4>
+          <p class="body-sm bio-desc">
+            Fullstack developer from Indonesia. Building web applications with React, Next.js, and Node.js. Writing about software architecture, frontend performance, and practical web dev.
+          </p>
+          <div class="bio-links">
+            {socials.map((link) => (
+              <a
+                href={link.href}
+                class="bio-link mono"
+                {...(link.external === false
+                  ? {}
+                  : { target: '_blank', rel: 'noopener noreferrer' })}
+              >
+                <Icon name={link.icon} /> {link.label}
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <!-- Article Pagination Nav -->
+      <footer class="blog-nav-footer">
+        <div class="nav-grid">
+          {prevPost ? (
+            <a href={`/blog/${prevPost.id}`} class="nav-card prev-card">
+              <span class="nav-direction mono"><Icon name="lucide:arrow-left" /> Newer Article</span>
+              <span class="nav-title">{prevPost.data.title}</span>
+            </a>
+          ) : <div class="nav-empty"></div>}
+
+          {nextPost ? (
+            <a href={`/blog/${nextPost.id}`} class="nav-card next-card">
+              <span class="nav-direction mono">Older Article <Icon name="lucide:arrow-right" /></span>
+              <span class="nav-title">{nextPost.data.title}</span>
+            </a>
+          ) : <div class="nav-empty"></div>}
+        </div>
+      </footer>
+    </div>
+  </article>
+</Layout>
+
+<script>
+  import gsap from 'gsap';
+  import ScrollTrigger from 'gsap/ScrollTrigger';
+  
+  gsap.registerPlugin(ScrollTrigger);
+  
+  document.addEventListener('astro:page-load', () => {
+    // ── Safe, Robust Entrance Animation with fromTo + clearProps ──
+    const heroContent = document.querySelector('.post-hero');
+    if (heroContent) {
+      gsap.fromTo('.nav-breadcrumbs', 
+        { y: 10, autoAlpha: 0 }, 
+        { y: 0, autoAlpha: 1, duration: 0.5, ease: 'power2.out', clearProps: 'all' }
+      );
+      gsap.fromTo('.meta-tags .tag', 
+        { y: 12, autoAlpha: 0 }, 
+        { y: 0, autoAlpha: 1, duration: 0.5, stagger: 0.05, ease: 'power2.out', clearProps: 'all' }
+      );
+      gsap.fromTo('.blog-title', 
+        { y: 20, autoAlpha: 0 }, 
+        { y: 0, autoAlpha: 1, duration: 0.7, delay: 0.08, ease: 'power3.out', clearProps: 'all' }
+      );
+      gsap.fromTo('.post-hero .subtitle', 
+        { y: 15, autoAlpha: 0 }, 
+        { y: 0, autoAlpha: 1, duration: 0.6, delay: 0.15, ease: 'power2.out', clearProps: 'all' }
+      );
+      gsap.fromTo('.meta-bottom', 
+        { y: 15, autoAlpha: 0 }, 
+        { y: 0, autoAlpha: 1, duration: 0.6, delay: 0.22, ease: 'power2.out', clearProps: 'all' }
+      );
+      gsap.fromTo('.content-prose', 
+        { y: 20, autoAlpha: 0 }, 
+        { y: 0, autoAlpha: 1, duration: 0.7, delay: 0.3, ease: 'power2.out', clearProps: 'all' }
+      );
+    }
+
+    // ── Reading Progress Bar ──
+    const progressBar = document.querySelector('.reading-progress-bar');
+    if (progressBar) {
+      gsap.to(progressBar, {
+        scaleX: 1,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '.blog-post',
+          start: 'top top',
+          end: 'bottom bottom',
+          scrub: true
+        }
+      });
+    }
+  });
+</script>
+
+<style is:global>
+  .pt-0 {
+    padding-top: 0;
+  }
+
+  .post-hero {
+    margin-bottom: var(--space-xl);
+  }
+  
+  .hero-content {
+    max-width: 820px;
+    margin: 0 auto;
+  }
+
+  .nav-breadcrumbs {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: var(--space-2xl);
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-muted);
+    font-size: 0.8125rem;
+    transition: color 0.3s ease;
+  }
+
+  .back-link:hover {
+    color: var(--text-primary);
+  }
+
+  .nav-breadcrumbs .sep {
+    color: var(--border-hover);
+    font-size: 0.75rem;
+  }
+
+  .read-estimate {
+    font-size: 0.8125rem;
+    color: var(--text-muted);
+  }
+  
+  .meta-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: var(--space-lg);
+  }
+  
+  .tag {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 0.3rem 0.75rem;
+    border-radius: var(--radius-full);
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .title {
+    margin-bottom: var(--space-lg);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+  }
+
+  .subtitle {
+    margin-bottom: var(--space-2xl);
+    color: var(--text-secondary);
+    line-height: 1.7;
+    font-size: 1.15rem;
+  }
+  
+  .meta-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: var(--space-xl);
+    border-top: 1px solid var(--border);
+  }
+
+  .author-snippet {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+  }
+
+  .author-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: var(--accent-subtle);
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.875rem;
+    border: 1px solid var(--accent);
+  }
+
+  .author-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  .author-name {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .date {
+    font-size: 0.8125rem;
+    color: var(--text-muted);
+  }
+
+  /* Content typography */
+  .content-prose {
+    max-width: 820px;
+    margin: 0 auto;
+    font-size: 1.0625rem;
+    line-height: 1.8;
+    color: var(--text-secondary);
+  }
+
+  .content-prose h2 {
+    color: var(--text-primary);
+    margin-top: var(--space-4xl);
+    margin-bottom: var(--space-md);
+    font-size: 1.875rem;
+    letter-spacing: -0.02em;
+  }
+
+  .content-prose h3 {
+    color: var(--text-primary);
+    margin-top: var(--space-2xl);
+    margin-bottom: var(--space-sm);
+    font-size: 1.35rem;
+  }
+
+  .content-prose p {
+    margin-bottom: var(--space-lg);
+  }
+
+  .content-prose ul {
+    margin-bottom: var(--space-xl);
+    padding-left: 1.25rem;
+  }
+
+  .content-prose li {
+    margin-bottom: 0.5rem;
+  }
+
+  .content-prose pre {
+    border-radius: var(--radius-xl);
+    padding: var(--space-xl);
+    margin: var(--space-2xl) 0;
+    border: 1px solid var(--border);
+    background: var(--surface) !important;
+    overflow-x: auto;
+  }
+
+  /* Author Bio Card */
+  .author-bio-card {
+    max-width: 820px;
+    margin: var(--space-4xl) auto 0;
+    padding: var(--space-2xl);
+    border-radius: var(--radius-2xl);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-xl);
+  }
+
+  .bio-avatar {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: var(--accent-subtle);
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.1rem;
+    border: 1px solid var(--accent);
+    flex-shrink: 0;
+  }
+
+  .bio-content {
+    flex: 1;
+  }
+
+  .bio-name {
+    font-size: 1.125rem;
+    margin-bottom: var(--space-xs);
+    color: var(--text-primary);
+  }
+
+  .bio-desc {
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: var(--space-md);
+  }
+
+  .bio-links {
+    display: flex;
+    gap: var(--space-lg);
+  }
+
+  .bio-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.8125rem;
+    color: var(--text-muted);
+    transition: color 0.25s ease;
+  }
+
+  .bio-link:hover {
+    color: var(--accent);
+  }
+
+  /* Navigation Footer */
+  .blog-nav-footer {
+    max-width: 820px;
+    margin: var(--space-4xl) auto 0;
+    padding-top: var(--space-3xl);
+    border-top: 1px solid var(--border);
+  }
+
+  .nav-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-xl);
+  }
+
+  .nav-card {
+    display: flex;
+    flex-direction: column;
+    padding: var(--space-xl);
+    border-radius: var(--radius-xl);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    transition: all 0.3s ease;
+    text-decoration: none;
+  }
+
+  .nav-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-3px);
+  }
+
+  .next-card {
+    text-align: right;
+  }
+
+  .nav-direction {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: var(--space-xs);
+  }
+
+  .next-card .nav-direction {
+    justify-content: flex-end;
+  }
+
+  .nav-title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.3;
+  }
+
+  @media (max-width: 768px) {
+    .blog-title {
+      font-size: clamp(1.85rem, 7.5vw, 2.5rem);
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+    }
+
+    .subtitle {
+      font-size: 1rem;
+      margin-bottom: var(--space-xl);
+    }
+
+    .meta-bottom {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--space-md);
+      padding-top: var(--space-lg);
+    }
+
+    .content-prose {
+      font-size: 1rem;
+      line-height: 1.7;
+    }
+
+    .content-prose h2 {
+      font-size: 1.45rem;
+      margin-top: var(--space-3xl);
+    }
+
+    .content-prose h3 {
+      font-size: 1.2rem;
+      margin-top: var(--space-xl);
+    }
+
+    .content-prose pre {
+      padding: 1rem;
+      border-radius: var(--radius-lg);
+      font-size: 0.8125rem;
+      margin: var(--space-lg) 0;
+    }
+
+    .author-bio-card {
+      flex-direction: column;
+      gap: var(--space-md);
+      padding: var(--space-xl);
+    }
+
+    .nav-grid {
+      grid-template-columns: 1fr;
+      gap: var(--space-md);
+    }
+
+    .next-card {
+      text-align: left;
+    }
+
+    .next-card .nav-direction {
+      justify-content: flex-start;
+    }
+  }
+
+  /* Reading Progress */
+  .reading-progress-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    z-index: 1000;
+    background: transparent;
+  }
+  .reading-progress-bar {
+    width: 100%;
+    height: 100%;
+    background: var(--accent);
+    transform-origin: 0% 50%;
+    transform: scaleX(0);
+  }
+</style>

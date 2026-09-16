@@ -1,0 +1,339 @@
+---
+---
+<section class="story-pin-section">
+  <div class="story-pin-wrapper">
+    <!-- Left: Pinned text that changes -->
+    <div class="story-text-column">
+      <div class="story-slide" data-index="0">
+        <span class="label">Chapter 01</span>
+        <h2 class="heading-2">Practical Foundations (Jul 2023 – May 2026)</h2>
+        <p class="body-lg">I studied Software Engineering at a vocational high school from July 2023 to May 2026. The curriculum was hands-on from day one: database modeling, SQL queries, and MVC architecture using PHP, Laravel, and MySQL. That's where I built my first fullstack e-commerce app with a functional admin dashboard. Starting on the backend gave me a solid respect for data flow and server logic.</p>
+      </div>
+      <div class="story-slide" data-index="1">
+        <span class="label">Chapter 02</span>
+        <h2 class="heading-2">6 Months at BRIN Pusdatin (Jul – Dec 2025)</h2>
+        <p class="body-lg">From July to December 2025, I completed a 6-month internship at the National Research and Innovation Agency (BRIN) at Gatot Subroto, placed in the Data and Information Center (Pusdatin). Around 80% of my time was spent on IT support, hardware maintenance, and network troubleshooting, while the remaining 20% went into maintaining internal web systems. It taught me how real organizational IT infrastructure operates.</p>
+      </div>
+      <div class="story-slide" data-index="2">
+        <span class="label">Chapter 03</span>
+        <h2 class="heading-2">Modern Web & New Horizons</h2>
+        <p class="body-lg">I don't stay locked into a single tool. Depending on what I'm building, I work across Next.js, React, Astro, Express, or Laravel — including building a finance tracking app connected to an ML pipeline for automated transaction categorization. Today, I'm actively expanding my knowledge into cybersecurity, Web3, and Web Development, while looking for junior software developer, web developer, or IT support opportunities.</p>
+      </div>
+    </div>
+
+    <!-- Right: Visual counter / progress -->
+    <div class="story-visual-column">
+      <div class="story-counter">
+        <span class="counter-current">01</span>
+        <div class="counter-bar">
+          <div class="counter-progress"></div>
+        </div>
+        <span class="counter-total">03</span>
+      </div>
+      <div class="story-visual-decor">
+        <svg viewBox="0 0 200 200" class="story-svg">
+          <circle class="story-circle" cx="100" cy="100" r="80" fill="none" stroke="currentColor" stroke-width="0.5" />
+          <circle class="story-circle" cx="100" cy="100" r="60" fill="none" stroke="currentColor" stroke-width="0.5" />
+          <circle class="story-circle" cx="100" cy="100" r="40" fill="none" stroke="currentColor" stroke-width="0.5" />
+          <line class="story-line-v" x1="100" y1="0" x2="100" y2="200" stroke="currentColor" stroke-width="0.5" />
+          <line class="story-line-h" x1="0" y1="100" x2="200" y2="100" stroke="currentColor" stroke-width="0.5" />
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  import gsap from 'gsap';
+  import ScrollTrigger from 'gsap/ScrollTrigger';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  document.addEventListener('astro:page-load', () => {
+    if (!document.querySelector('.story-pin-section')) return;
+
+    const mm = gsap.matchMedia();
+
+    // Desktop Animation
+    mm.add("(min-width: 769px)", () => {
+      const slides = document.querySelectorAll('.story-slide');
+      const counterCurrent = document.querySelector('.counter-current');
+      const counterProgress = document.querySelector('.counter-progress');
+
+      gsap.set(slides, { opacity: 0, pointerEvents: 'none' });
+      gsap.set(slides[0], { opacity: 1, pointerEvents: 'auto' });
+
+      // Safer text split that preserves HTML like <span>
+      const splitTextSafe = (element: any) => {
+        if (element.hasAttribute('data-splitted')) return element.querySelectorAll('.split-word');
+        const text = element.textContent;
+        element.innerHTML = '';
+        text.split(' ').forEach((word: string) => {
+          const span = document.createElement('span');
+          span.className = 'split-word';
+          span.style.display = 'inline-block';
+          span.style.marginRight = '0.25em';
+          span.style.willChange = 'transform, opacity';
+          span.textContent = word;
+          element.appendChild(span);
+        });
+        element.setAttribute('data-splitted', 'true');
+        return element.querySelectorAll('.split-word');
+      };
+
+      const storyTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: '.story-pin-section',
+          start: 'top top',
+          end: () => `+=${slides.length * 100}%`,
+          pin: '.story-pin-wrapper',
+          scrub: true
+        }
+      });
+
+      slides.forEach((slide, i) => {
+        const title = slide.querySelector('h2');
+        const desc = slide.querySelector('p');
+        const titleWords = title ? splitTextSafe(title) : [];
+
+        if (i === 0) {
+          gsap.fromTo(titleWords, 
+            { y: 40, opacity: 0, rotateX: -40 },
+            { y: 0, opacity: 1, rotateX: 0, duration: 1, stagger: 0.05, ease: 'power3.out', clearProps: 'all',
+              scrollTrigger: { trigger: '.story-pin-section', start: 'top 80%' }
+            }
+          );
+          gsap.fromTo(desc, 
+            { y: 20, opacity: 0 },
+            { y: 0, opacity: 1, duration: 1, delay: 0.2, ease: 'power3.out', clearProps: 'all',
+              scrollTrigger: { trigger: '.story-pin-section', start: 'top 80%' }
+            }
+          );
+        }
+
+        if (i < slides.length - 1) {
+          storyTl.to(slide, { opacity: 0, y: -40, duration: 0.5, ease: 'power2.inOut' });
+          const nextSlide = slides[i + 1];
+          const nextTitle = nextSlide.querySelector('h2');
+          const nextTitleWords = nextTitle ? splitTextSafe(nextTitle) : [];
+          
+          storyTl.fromTo(nextSlide,
+            { opacity: 0, y: 40, pointerEvents: 'none' },
+            { opacity: 1, y: 0, pointerEvents: 'auto', duration: 0.2, ease: 'power2.out' },
+            '-=0.2'
+          );
+          storyTl.fromTo(nextTitleWords, 
+            { y: 40, opacity: 0, rotateX: -40 },
+            { y: 0, opacity: 1, rotateX: 0, duration: 0.6, stagger: 0.03, ease: 'power3.out' },
+            '-=0.1'
+          );
+        }
+      });
+
+      ScrollTrigger.create({
+        trigger: '.story-pin-section',
+        start: 'top top',
+        end: () => `+=${slides.length * 100}%`,
+        scrub: true,
+        onUpdate: (self) => {
+          const progress = self.progress;
+          const idx = Math.round(progress * (slides.length - 1));
+          if (counterCurrent) counterCurrent.textContent = String(idx + 1).padStart(2, '0');
+          if (counterProgress) (counterProgress as HTMLElement).style.height = `${progress * 100}%`;
+        }
+      });
+
+      const circles = gsap.utils.toArray('.story-circle');
+      circles.forEach((circle: any, i: number) => {
+        const length = circle.getTotalLength();
+        gsap.set(circle, { strokeDasharray: length, strokeDashoffset: length });
+        storyTl.to(circle, { strokeDashoffset: 0, duration: 1, ease: 'power2.inOut' }, i * 0.2);
+        gsap.to(circle, {
+          rotation: i % 2 === 0 ? 360 : -360,
+          transformOrigin: '100px 100px',
+          ease: 'none',
+          scrollTrigger: {
+            trigger: '.story-pin-section',
+            start: 'top top',
+            end: () => `+=${slides.length * 100}%`,
+            scrub: true
+          }
+        });
+      });
+      
+      const lines = gsap.utils.toArray('.story-line-v, .story-line-h');
+      lines.forEach((line: any) => {
+        const length = line.getTotalLength ? line.getTotalLength() : 200;
+        gsap.set(line, { strokeDasharray: length, strokeDashoffset: length });
+        storyTl.to(line, { strokeDashoffset: 0, duration: 1.5, ease: 'power2.out' }, 0);
+      });
+    });
+
+    // Mobile Animation
+    mm.add("(max-width: 768px)", () => {
+      // Setup elements to be static, stacked, and visible
+      gsap.set('.story-slide', { opacity: 1, pointerEvents: 'auto', position: 'relative' });
+      
+      // Simple fade up for each slide
+      gsap.utils.toArray('.story-slide').forEach((slide: any) => {
+        gsap.fromTo(slide, 
+          { y: 30, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out', clearProps: 'all',
+            scrollTrigger: { trigger: slide, start: 'top 85%', toggleActions: 'play none none none' }
+          }
+        );
+      });
+    });
+
+    // Cleanup matchMedia on view transition to prevent memory leaks and resize bugs
+    document.addEventListener('astro:before-swap', () => {
+      mm.revert();
+    }, { once: true });
+  });
+</script>
+
+<style>
+  .story-pin-section {
+    position: relative;
+  }
+
+  .story-pin-wrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-4xl);
+    align-items: center;
+    min-height: 100dvh;
+    padding: 0 max(2rem, calc((100vw - var(--container)) / 2));
+  }
+
+  .story-text-column {
+    position: relative;
+    min-height: 300px;
+  }
+
+  .story-slide {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--space-md);
+  }
+
+  .story-slide .label {
+    display: block;
+    color: var(--accent);
+    margin-bottom: var(--space-xs);
+  }
+
+  .story-slide h2 {
+    margin-bottom: var(--space-sm);
+  }
+
+  .story-slide p {
+    color: var(--text-secondary);
+    line-height: 1.8;
+    max-width: 500px;
+  }
+
+  .story-slide .em {
+    color: var(--text-primary);
+    font-style: italic;
+  }
+
+  .story-mobile-divider {
+    display: none;
+    width: 2px;
+    height: 40px;
+    background: var(--accent);
+    margin: var(--space-xl) 0;
+  }
+
+  .story-visual-column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2xl);
+  }
+
+  .story-counter {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-sm);
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    color: var(--text-muted);
+  }
+
+  .counter-current {
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1;
+  }
+
+  .counter-bar {
+    width: 2px;
+    height: 80px;
+    background: var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .counter-progress {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 0%;
+    background: var(--accent);
+    transition: height 0.3s ease;
+  }
+
+  .story-visual-decor {
+    position: relative;
+  }
+
+  .story-svg {
+    width: 200px;
+    height: 200px;
+    color: var(--border);
+    opacity: 0.5;
+  }
+
+  @media (max-width: 768px) {
+    .story-pin-wrapper {
+      grid-template-columns: 1fr;
+      min-height: auto;
+      gap: var(--space-2xl);
+      padding: var(--space-4xl) var(--space-lg);
+    }
+
+    .story-text-column {
+      min-height: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    
+    .story-slide {
+      position: relative;
+      opacity: 1 !important;
+      pointer-events: auto !important;
+      min-height: auto;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: var(--space-lg) 0;
+      border-left: 2px solid var(--accent);
+      padding-left: var(--space-lg);
+      margin-bottom: var(--space-lg);
+    }
+
+    .story-visual-column {
+      display: none; /* Hide visual logic on mobile for cleaner UX */
+    }
+  }
+</style>

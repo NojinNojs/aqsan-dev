@@ -1,0 +1,209 @@
+---
+import ProjectCard from '../ProjectCard.astro';
+import { Icon } from 'astro-icon/components';
+import { mailtoHref } from '../../lib/site';
+
+interface Props {
+  projects: any[];
+}
+
+const { projects } = Astro.props;
+---
+
+<section class="section container" id="projects-section">
+  <div class="section-header-huge" data-animate="fade-up">
+    <div class="header-titles">
+      <h2 class="huge-heading">
+        <span class="huge-line">SELECTED</span>
+        <span class="huge-line outline-text">PROJECTS</span>
+      </h2>
+    </div>
+    <a href="/projects" class="link-arrow">
+      View all projects <Icon name="lucide:arrow-right" />
+    </a>
+  </div>
+
+  {projects.length > 0 ? (
+    <div class="projects-grid">
+      {projects.map((project, i) => (
+        <div data-animate="fade-up" data-delay={i * 0.1}>
+          <ProjectCard project={project} index={i} />
+        </div>
+      ))}
+    </div>
+  ) : (
+    <div class="empty-preview-card" data-animate="fade-up">
+      <div class="preview-inner">
+        <span class="label">Work In Progress</span>
+        <h3 class="heading-3 preview-title">Selected case studies in preparation</h3>
+        <p class="body-sm preview-desc">
+          Production web applications and client projects are currently being curated for public showcase. In the meantime, feel free to explore my capabilities or get in touch for private demos.
+        </p>
+        <div class="preview-actions">
+          <a href="/services" class="btn btn-primary btn-sm">
+            Explore Services <Icon name="lucide:arrow-right" />
+          </a>
+          {mailtoHref && (
+            <a href={mailtoHref} class="btn btn-outline btn-sm">
+              Request Private Walkthrough
+            </a>
+          )}
+        </div>
+      </div>
+    </div>
+  )}
+</section>
+
+<style>
+  #projects-section {
+    padding-top: var(--space-4xl);
+  }
+
+  .section-header-huge {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: var(--space-4xl);
+    gap: var(--space-xl);
+  }
+
+  .huge-heading {
+    display: flex;
+    flex-direction: column;
+    line-height: 1;
+  }
+
+  .huge-line {
+    font-size: clamp(3rem, 8vw, 8rem);
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    color: var(--text-primary);
+    padding-top: 0.1em;
+  }
+
+  .outline-text {
+    color: transparent;
+    -webkit-text-stroke: 2px var(--text-primary);
+    margin-left: 1em; /* Staggered */
+  }
+
+  .link-arrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    white-space: nowrap;
+    transition: color 0.3s ease, gap 0.3s var(--ease-out-expo);
+    padding-bottom: var(--space-md);
+  }
+
+  @media (hover: hover) {
+    .link-arrow:hover {
+      color: var(--text-primary);
+      gap: 0.75rem;
+    }
+  }
+
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-xl);
+  }
+
+  @media (max-width: 1024px) and (min-width: 769px) {
+    .projects-grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-md);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .section-header-huge {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--space-xl);
+      margin-bottom: var(--space-3xl);
+    }
+
+    .outline-text {
+      margin-left: 0;
+      -webkit-text-stroke: 1px var(--text-primary);
+    }
+
+    .projects-grid {
+      display: flex;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scroll-padding: 0;
+      padding-bottom: var(--space-xl);
+      
+      margin-inline: calc(-1 * max(1.25rem, 4vw));
+      padding-inline: max(1.25rem, 4vw);
+      gap: var(--space-md);
+      
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    
+    .projects-grid::-webkit-scrollbar {
+      display: none;
+    }
+    
+    .projects-grid > div {
+      flex: 0 0 85%;
+      scroll-snap-align: center;
+    }
+
+    .empty-preview-card {
+      padding: var(--space-2xl) var(--space-lg);
+    }
+
+    .preview-actions {
+      flex-direction: column;
+      width: 100%;
+    }
+
+    .preview-actions :global(.btn) {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+
+  /* Empty State Preview */
+  .empty-preview-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-2xl);
+    padding: var(--space-3xl) var(--space-2xl);
+    text-align: center;
+    max-width: 760px;
+    margin: 0 auto;
+  }
+
+  .preview-inner .label {
+    margin-bottom: var(--space-sm);
+    display: inline-block;
+  }
+
+  .preview-title {
+    margin-bottom: var(--space-md);
+  }
+
+  .preview-desc {
+    max-width: 540px;
+    margin: 0 auto var(--space-2xl);
+    color: var(--text-secondary);
+    line-height: 1.7;
+  }
+
+  .preview-actions {
+    display: flex;
+    gap: var(--space-md);
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+</style>

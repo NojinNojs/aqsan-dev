@@ -1,0 +1,445 @@
+---
+import { Icon } from 'astro-icon/components';
+
+interface TimelineItem {
+  year: string;
+  status?: string;
+  statusLabel?: string;
+  role: string;
+  org?: string;
+  location?: string;
+  desc: string;
+  tags?: string[];
+}
+
+interface Props {
+  timeline: TimelineItem[];
+}
+
+const { timeline } = Astro.props;
+---
+
+<section class="section container timeline-section" id="experience-section">
+  <div class="section-label gs-reveal-timeline">
+    <span class="label">Career & Education</span>
+    <h2 class="heading-1">Experience &<br/><em>milestones</em>.</h2>
+    <p class="body-lg subtitle-text">
+      From vocational foundations to an enterprise IT internship at BRIN and practical web development.
+    </p>
+  </div>
+
+  <div class="story-timeline-container">
+    <div class="timeline-spine" aria-hidden="true">
+      <div class="timeline-progress"></div>
+    </div>
+    
+    <div class="timeline-items">
+      {timeline.map((item) => (
+        <div class="timeline-entry" data-status={item.status}>
+          <!-- Node / Marker on the spine -->
+          <div class={`timeline-node ${item.status === 'Active' ? 'is-active' : ''}`} aria-hidden="true">
+            {item.status === 'Active' ? (
+              <span class="pulse-ring"></span>
+            ) : null}
+            <span class="node-dot"></span>
+          </div>
+
+          <!-- Content Card -->
+          <div class="timeline-card">
+            <div class="card-meta">
+              <span class="meta-year mono">{item.year}</span>
+              {item.statusLabel && (
+                <span class={`meta-status ${item.status === 'Active' ? 'status-active' : ''}`}>
+                  {item.status === 'Active' && <span class="mini-pulse"></span>}
+                  {item.statusLabel}
+                </span>
+              )}
+            </div>
+
+            <h3 class="heading-3 timeline-role">{item.role}</h3>
+
+            {(item.org || item.location) && (
+              <div class="timeline-org">
+                {item.org && (
+                  <span class="org-item">
+                    <Icon name="lucide:building-2" class="meta-icon" />
+                    <span>{item.org}</span>
+                  </span>
+                )}
+                {item.location && (
+                  <span class="org-item">
+                    <Icon name="lucide:map-pin" class="meta-icon" />
+                    <span>{item.location}</span>
+                  </span>
+                )}
+              </div>
+            )}
+
+            <p class="body-sm timeline-desc">{item.desc}</p>
+
+            {item.tags && item.tags.length > 0 && (
+              <div class="timeline-tags">
+                {item.tags.map(tag => (
+                  <span class="timeline-tag">{tag}</span>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<script>
+  import gsap from 'gsap';
+  import ScrollTrigger from 'gsap/ScrollTrigger';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  document.addEventListener('astro:page-load', () => {
+    const section = document.getElementById('experience-section');
+    if (!section) return;
+
+    // Header reveal
+    gsap.fromTo('.gs-reveal-timeline', 
+      { y: 35, autoAlpha: 0 },
+      {
+        y: 0, autoAlpha: 1, duration: 0.9, ease: 'power3.out', clearProps: 'all',
+        scrollTrigger: { trigger: section, start: 'top 85%' }
+      }
+    );
+
+    // Spine Progress Animation
+    const progress = section.querySelector<HTMLElement>('.timeline-progress');
+    if (progress) {
+      gsap.to(progress, {
+        height: '100%',
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '.story-timeline-container',
+          start: 'top 65%',
+          end: 'bottom 75%',
+          scrub: 0.5,
+        }
+      });
+    }
+
+    // Card Entries with Stagger
+    const entries = section.querySelectorAll('.timeline-entry');
+    entries.forEach((entry) => {
+      const card = entry.querySelector('.timeline-card');
+      const node = entry.querySelector('.timeline-node');
+
+      gsap.fromTo(node, 
+        { scale: 0, autoAlpha: 0 },
+        { 
+          scale: 1, autoAlpha: 1, duration: 0.5, ease: 'back.out(2)', clearProps: 'transform,opacity',
+          scrollTrigger: { trigger: entry, start: 'top 85%' }
+        }
+      );
+
+      gsap.fromTo(card, 
+        { x: 30, autoAlpha: 0 },
+        { 
+          x: 0, autoAlpha: 1, duration: 0.8, ease: 'power3.out', clearProps: 'transform,opacity',
+          scrollTrigger: { trigger: entry, start: 'top 85%' }
+        }
+      );
+    });
+  });
+</script>
+
+<style>
+  .timeline-section {
+    padding-block: var(--space-5xl) var(--space-4xl);
+    position: relative;
+  }
+
+  .timeline-section .section-label {
+    margin-bottom: var(--space-4xl);
+  }
+
+  .timeline-section .label {
+    display: inline-block;
+    margin-bottom: var(--space-xs);
+  }
+
+  .timeline-section .heading-1 {
+    margin-bottom: var(--space-xs);
+  }
+
+  .timeline-section em {
+    font-weight: 300;
+  }
+
+  .subtitle-text {
+    max-width: 600px;
+    color: var(--text-secondary);
+    margin-top: var(--space-xs);
+  }
+
+  /* Timeline Container */
+  .story-timeline-container {
+    position: relative;
+    max-width: 840px;
+    margin: 0 auto;
+    padding-left: 2rem;
+  }
+
+  /* Vertical Spine */
+  .timeline-spine {
+    position: absolute;
+    top: 1.5rem;
+    bottom: 2rem;
+    left: 2.75rem;
+    width: 2px;
+    background: var(--border);
+    border-radius: var(--radius-full);
+  }
+
+  .timeline-progress {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 0%;
+    background: var(--accent);
+    box-shadow: 0 0 12px var(--accent-glow);
+    border-radius: var(--radius-full);
+  }
+
+  /* Timeline Items List */
+  .timeline-items {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3xl);
+  }
+
+  /* Single Entry */
+  .timeline-entry {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-2xl);
+  }
+
+  /* Node Marker */
+  .timeline-node {
+    position: relative;
+    width: 26px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1.25rem;
+    z-index: 2;
+  }
+
+  .node-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--surface);
+    border: 2px solid var(--accent);
+    transition: transform 0.3s ease, background-color 0.3s ease;
+  }
+
+  .timeline-node.is-active .node-dot {
+    background: var(--accent);
+    border-color: var(--accent);
+    box-shadow: 0 0 12px var(--accent);
+  }
+
+  .pulse-ring {
+    position: absolute;
+    inset: -3px;
+    border-radius: 50%;
+    background: var(--accent);
+    opacity: 0.4;
+    animation: activePulse 2s cubic-bezier(0.2, 0.8, 0.2, 1) infinite;
+  }
+
+  @keyframes activePulse {
+    0% { transform: scale(0.8); opacity: 0.8; }
+    100% { transform: scale(2.2); opacity: 0; }
+  }
+
+  /* Timeline Card */
+  .timeline-card {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-2xl);
+    padding: var(--space-2xl);
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.35s var(--ease-out-expo),
+                border-color 0.35s ease,
+                box-shadow 0.35s ease;
+    position: relative;
+  }
+
+  .timeline-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--accent);
+    box-shadow: 0 16px 36px -10px rgba(0, 0, 0, 0.12), var(--shadow-glow);
+  }
+
+  /* Card Meta Header */
+  .card-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-md);
+  }
+
+  .meta-year {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    color: var(--accent);
+    padding: 0.25rem 0.65rem;
+    background: var(--accent-subtle);
+    border-radius: var(--radius-full);
+    border: 1px solid var(--accent);
+    letter-spacing: 0.02em;
+  }
+
+  .meta-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-weight: 500;
+    background: var(--bg-primary);
+    padding: 0.25rem 0.65rem;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--border);
+  }
+
+  .meta-status.status-active {
+    color: var(--accent);
+    font-weight: 600;
+    border-color: var(--accent);
+    background: var(--accent-subtle);
+  }
+
+  .mini-pulse {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 6px var(--accent);
+  }
+
+  /* Role Title */
+  .timeline-role {
+    font-size: 1.35rem;
+    line-height: 1.25;
+    margin-bottom: var(--space-xs);
+    color: var(--text-primary);
+  }
+
+  /* Organization & Location */
+  .timeline-org {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--space-md);
+    margin-bottom: var(--space-md);
+    font-size: 0.8125rem;
+    color: var(--text-muted);
+  }
+
+  .org-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .meta-icon {
+    width: 14px;
+    height: 14px;
+    color: var(--text-muted);
+    flex-shrink: 0;
+  }
+
+  /* Description */
+  .timeline-desc {
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin-bottom: var(--space-lg);
+  }
+
+  /* Tags Chips */
+  .timeline-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+  }
+
+  .timeline-tag {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    background: var(--bg-primary);
+    padding: 0.25rem 0.65rem;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    transition: border-color 0.25s ease, color 0.25s ease;
+  }
+
+  .timeline-card:hover .timeline-tag {
+    border-color: var(--border-hover);
+    color: var(--text-primary);
+  }
+
+  /* Responsive Styling */
+  @media (max-width: 768px) {
+    .story-timeline-container {
+      padding-left: 0;
+    }
+
+    .timeline-spine {
+      left: 10px;
+    }
+
+    .timeline-entry {
+      gap: 1rem;
+    }
+
+    .timeline-node {
+      width: 22px;
+      height: 22px;
+      margin-top: 1rem;
+    }
+
+    .node-dot {
+      width: 10px;
+      height: 10px;
+    }
+
+    .timeline-card {
+      padding: var(--space-xl) var(--space-lg);
+      border-radius: var(--radius-xl);
+    }
+
+    .timeline-role {
+      font-size: 1.15rem;
+    }
+
+    .card-meta {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.4rem;
+    }
+
+    .timeline-org {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.25rem;
+    }
+  }
+</style>

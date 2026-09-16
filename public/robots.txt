@@ -1,0 +1,6 @@
+# Robots.txt for https://aqsan.dev
+User-agent: *
+Allow: /
+
+# Sitemaps
+Sitemap: https://aqsan.dev/sitemap-index.xml

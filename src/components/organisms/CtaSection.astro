@@ -1,0 +1,138 @@
+---
+import { Icon } from 'astro-icon/components';
+import { mailtoHref } from '../../lib/site';
+
+interface Props {
+  buttonText?: string;
+  buttonHref?: string;
+}
+
+const { 
+  buttonText = "Let's Connect",
+  buttonHref = mailtoHref ?? '/about'
+} = Astro.props;
+---
+
+<section class="section container cta-massive">
+  <div class="cta-content" data-animate="fade-up">
+    <h2 class="huge-heading">
+      <span class="huge-line">LET'S</span>
+      <span class="huge-line outline-text">BUILD</span>
+    </h2>
+    
+    <div class="cta-bottom">
+      <p class="body-lg">
+        Have an exciting project, freelance opportunity, or an open engineering role? I'm always open to discussing new opportunities and building things that matter.
+      </p>
+      <a href={buttonHref} class="btn btn-primary btn-lg">
+        {buttonText} <Icon name="lucide:arrow-right" />
+      </a>
+    </div>
+  </div>
+
+  <div class="cta-glow" aria-hidden="true"></div>
+</section>
+
+<style>
+  .cta-massive {
+    position: relative;
+    padding-block: var(--space-5xl) var(--space-4xl);
+    margin-top: var(--space-3xl);
+  }
+
+  .cta-content {
+    position: relative;
+    z-index: 2;
+  }
+
+  .huge-heading {
+    display: flex;
+    flex-direction: column;
+    line-height: 1;
+    margin-bottom: var(--space-2xl);
+    cursor: default; /* Hint at interactivity */
+  }
+
+  .huge-line {
+    font-size: clamp(4rem, 15vw, 15rem);
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    color: var(--text-primary);
+    padding-top: 0.1em;
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), color 0.4s ease;
+    will-change: transform;
+  }
+
+  .outline-text {
+    color: transparent;
+    -webkit-text-stroke: 2px var(--text-primary);
+    margin-left: 10vw;
+  }
+
+  /* Kinetic Hover Effects */
+  @media (hover: hover) {
+    .cta-content:hover .huge-line:not(.outline-text) {
+      transform: translateX(3vw);
+    }
+    .cta-content:hover .outline-text {
+      transform: translateX(-3vw);
+      -webkit-text-stroke-color: var(--accent); /* Glow on hover */
+    }
+  }
+
+  .cta-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: var(--space-2xl);
+    padding-top: var(--space-2xl);
+  }
+
+  .cta-bottom p {
+    max-width: 500px;
+    color: var(--text-secondary);
+  }
+
+  .btn-lg {
+    padding: 1rem 2.5rem;
+    font-size: 1.125rem;
+    white-space: nowrap;
+    border-radius: var(--radius-full);
+  }
+
+  .cta-glow {
+    position: absolute;
+    bottom: -20%;
+    right: 10%;
+    width: 60vw;
+    height: 60vw;
+    background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+    filter: blur(100px);
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.6;
+  }
+
+  @media (max-width: 768px) {
+    .cta-massive {
+      padding-block: var(--space-3xl);
+    }
+    
+    .outline-text {
+      margin-left: 0;
+      -webkit-text-stroke: 1px var(--text-primary);
+    }
+    
+    .cta-bottom {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--space-xl);
+    }
+
+    .cta-bottom .btn {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+</style>

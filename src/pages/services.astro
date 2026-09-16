@@ -1,0 +1,1049 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { Icon } from 'astro-icon/components';
+import { mailtoHref, whatsappHref } from '../lib/site';
+
+const services = [
+  {
+    icon: 'simple-icons:react',
+    category: 'Frontend & UI',
+    title: 'Web & Interface Development',
+    desc: 'Building responsive websites and clean user interfaces. Converting designs from Figma into fast, accessible, mobile-first web pages.',
+    points: [
+      'Responsive websites & modern landing pages',
+      'Converting Figma designs to clean code',
+      'Mobile-first layouts & zero layout shifts',
+      'Deployment to Vercel, Netlify, or cPanel hosting'
+    ],
+    tools: ['React', 'Next.js', 'Astro', 'Tailwind CSS', 'TypeScript']
+  },
+  {
+    icon: 'simple-icons:postgresql',
+    category: 'Backend & Data',
+    title: 'Backend APIs & Database Setup',
+    desc: 'Setting up straightforward REST APIs and relational database models. Connecting frontend user interfaces with server-side logic and storage.',
+    points: [
+      'CRUD RESTful API development',
+      'Database schema setup (MySQL & PostgreSQL)',
+      'Connecting third-party APIs & webhooks',
+      'API testing with Postman & clear documentation'
+    ],
+    tools: ['Node.js', 'Express', 'Laravel', 'PostgreSQL', 'MySQL']
+  },
+  {
+    icon: 'lucide:wrench',
+    category: 'Systems & Support',
+    title: 'IT Support & Systems Maintenance',
+    desc: 'Hands-on hardware troubleshooting, operating system maintenance, and local network diagnostics — backed by 6 months of enterprise experience at BRIN Pusdatin.',
+    points: [
+      'PC & laptop hardware diagnostics & component fixes',
+      'Operating system installation & software configuration',
+      'Local network (LAN / Wi-Fi) setup & troubleshooting',
+      'Internal tools maintenance & user IT guidance'
+    ],
+    tools: ['Hardware Troubleshooting', 'Windows & Linux', 'LAN & Wi-Fi', 'PC Assembly']
+  },
+];
+
+const engagementModels = [
+  {
+    type: 'Fixed-Scope Task / MVP',
+    badge: 'Project-Based',
+    desc: 'Best for well-defined deliverables like a landing page, an API integration, or a small web MVP.',
+    features: [
+      'Clear requirements & realistic timeline',
+      'Straightforward upfront pricing',
+      'Regular progress updates via WhatsApp or email',
+      'Bug-fix support after handover'
+    ]
+  },
+  {
+    type: 'Dedicated Retainer',
+    badge: 'Part-Time',
+    desc: 'Flexible hours for ongoing website maintenance, frontend bug fixes, or routine IT support.',
+    features: [
+      'Flexible weekly hours',
+      'Direct async communication (WhatsApp / email)',
+      'Quick response on urgent fixes',
+      'Billed weekly or monthly'
+    ]
+  },
+  {
+    type: 'Full-Time / Internship Role',
+    badge: 'Available',
+    desc: 'Ready to join an engineering or IT operations team as a junior software engineer, web developer, or IT support technician.',
+    features: [
+      'Vocational Software Engineering foundation (2023–2026)',
+      '6 months of hands-on BRIN IT support & dev experience',
+      'Adaptable across modern JS/TS and PHP',
+      'Remote or on-site (Jabodetabek)'
+    ]
+  }
+];
+
+const processSteps = [
+  { 
+    num: '01', 
+    title: 'Clarify Requirements', 
+    desc: 'We talk through what needs to be built or solved, the key features, and a realistic timeframe.' 
+  },
+  { 
+    num: '02', 
+    title: 'Implementation', 
+    desc: 'I build feature by feature with clean, readable code and keep you updated with preview links.' 
+  },
+  { 
+    num: '03', 
+    title: 'Testing & Refinement', 
+    desc: 'We test responsiveness on phone and desktop, verify forms/APIs, and address any feedback.' 
+  },
+  { 
+    num: '04', 
+    title: 'Handover & Support', 
+    desc: 'Deploying to your server or cloud, handing over repository files, and providing post-launch assistance.' 
+  },
+];
+
+const faqs = [
+  {
+    q: "What is your availability (Full-time, Internship, or Freelance)?",
+    a: "I'm open to all three! Having completed my 6-month internship at BRIN and finishing vocational software engineering (2023–2026), I'm actively seeking junior full-time or internship opportunities in software engineering, web development, or IT support. In parallel, I also take on freelance web projects."
+  },
+  {
+    q: "How do you handle pricing for freelance work?",
+    a: "For specific tasks or deliverables (like building a landing page, an MVP, or an API integration), I prefer transparent fixed-price quotes agreed upfront so there are no surprises. For ongoing maintenance or IT support, we can arrange an hourly rate or a flexible weekly/monthly retainer."
+  },
+  {
+    q: "What is your typical turnaround time?",
+    a: "A focused landing page or interactive component usually takes 3 to 7 days. A full website or web app with database and backend logic typically takes 2 to 4 weeks, depending on requirements."
+  },
+  {
+    q: "Can you provide on-site IT support or do you only work remotely?",
+    a: "For IT support and hardware/network setup, I'm available on-site within the Jabodetabek area (Jakarta, Bogor, Depok, Tangerang, Bekasi). For software and web development, I work smoothly both remotely and on-site."
+  },
+  {
+    q: "What kind of projects are best suited for you?",
+    a: "Small to medium web applications, responsive landing pages, REST API endpoints, and IT support/hardware troubleshooting. I'm honest about my capabilities and won't promise things beyond my current scope."
+  },
+  {
+    q: "How do we communicate and track progress during a project?",
+    a: "Direct and transparent via WhatsApp, email, or Instagram, backed by GitHub pull requests and simple task boards. You will always have live staging preview links to test features as they are built."
+  }
+];
+---
+
+<Layout 
+  title="Services & Collaboration | Web Development & IT Support"
+  description="Web application development, backend APIs, and reliable IT support services by Muhammad Raffi Aqsan. Transparent workflow, clear deliverables, and flexible collaboration models."
+>
+  <!-- Hero Section -->
+  <section class="section container page-top">
+    <div class="services-hero gs-reveal-services">
+      <span class="label">Services & Collaboration</span>
+      <h1 class="heading-1">
+        Software development &<br/>
+        <em>technical support</em>.
+      </h1>
+      <p class="body-lg service-intro">
+        Whether you need a web app built, an MVP shipped, or a hungry junior developer / IT support technician to join your team — here is how I can contribute.
+      </p>
+    </div>
+  </section>
+
+  <!-- Core Services Grid -->
+  <section class="section container pt-0">
+    <div class="services-grid">
+      {services.map((service, i) => (
+        <div class="service-card" data-animate="fade-up" data-delay={i * 0.1}>
+          <div class="service-card-top">
+            <div class="service-icon-box">
+              <Icon name={service.icon} class="service-icon" />
+            </div>
+            <span class="service-category-badge mono">{service.category}</span>
+          </div>
+
+          <h3 class="heading-3 service-title">{service.title}</h3>
+          <p class="body-sm service-desc">{service.desc}</p>
+
+          <div class="service-divider"></div>
+
+          <div class="service-points-section">
+            <span class="points-label mono">What I help with:</span>
+            <ul class="points-list">
+              {service.points.map(p => (
+                <li>
+                  <Icon name="lucide:check" class="check-icon" />
+                  <span>{p}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div class="service-tools">
+            {service.tools.map(t => (
+              <span class="service-tool-chip">{t}</span>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- Engagement Models -->
+  <section class="section container">
+    <div class="section-label" data-animate="fade-up">
+      <span class="label">Collaboration</span>
+      <h2 class="heading-2">How we can work together</h2>
+      <p class="body-lg subtitle-text">Flexible models tailored to your project stage and operational needs.</p>
+    </div>
+
+    <div class="models-grid">
+      {engagementModels.map((model, i) => (
+        <div class={`model-card ${model.badge === 'Most Popular' ? 'is-popular' : ''}`} data-animate="fade-up" data-delay={i * 0.1}>
+          <div class="model-badge mono">{model.badge}</div>
+          <h3 class="heading-3 model-title">{model.type}</h3>
+          <p class="body-sm model-desc">{model.desc}</p>
+
+          <ul class="model-features">
+            {model.features.map(f => (
+              <li>
+                <Icon name="lucide:check-circle-2" class="model-check" />
+                <span>{f}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- Process -->
+  <section class="section container">
+    <div class="section-label" data-animate="fade-up">
+      <span class="label">Workflow</span>
+      <h2 class="heading-2">How projects run</h2>
+      <p class="body-lg subtitle-text">A straightforward, predictable process with zero guesswork.</p>
+    </div>
+
+    <div class="process-grid">
+      {processSteps.map((step, i) => (
+        <div class="process-step" data-animate="fade-up" data-delay={i * 0.08}>
+          <div class="step-top">
+            <span class="process-num mono">{step.num}</span>
+            <span class="step-dot" aria-hidden="true"></span>
+          </div>
+          <h3 class="heading-3 process-title">{step.title}</h3>
+          <p class="body-sm process-desc">{step.desc}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- FAQ Section (Refactored to Interactive Split Accordion) -->
+  <section class="section container faq-section">
+    <div class="faq-layout">
+      <!-- Left: Sticky Context & Quick Contact -->
+      <div class="faq-sidebar" data-animate="fade-up">
+        <span class="label">FAQ & Policies</span>
+        <h2 class="heading-2 faq-main-title">
+          Frequently asked<br/>
+          <em>questions</em>.
+        </h2>
+        <p class="body-md faq-sidebar-desc">
+          Clear answers about pricing, turnaround, communication, and post-launch support. No corporate jargon.
+        </p>
+
+        <div class="faq-help-card">
+          <div class="help-card-icon">
+            <Icon name="lucide:help-circle" />
+          </div>
+          <div class="help-card-content">
+            <div class="help-card-title">Have a specific question?</div>
+            <p class="body-xs help-card-text">I typically respond within 24 hours to project inquiries.</p>
+            {mailtoHref && (
+              <a href={mailtoHref} class="help-card-link">
+                <span>Ask directly</span>
+                <Icon name="lucide:arrow-right" class="arrow" />
+              </a>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Interactive Accordion -->
+      <div class="faq-accordion-list" role="region" aria-label="Frequently Asked Questions">
+        {faqs.map((faq, i) => (
+          <div 
+            class={`faq-accordion-item ${i === 0 ? 'is-open' : ''}`}
+            data-animate="fade-up" 
+            data-delay={i * 0.08}
+          >
+            <button 
+              class="faq-accordion-trigger" 
+              type="button"
+              aria-expanded={i === 0 ? 'true' : 'false'}
+              aria-controls={`faq-answer-${i}`}
+            >
+              <div class="faq-trigger-left">
+                <span class="faq-index mono">0{i + 1}</span>
+                <span class="faq-q-text">{faq.q}</span>
+              </div>
+              <div class="faq-icon-bubble">
+                <Icon name="lucide:plus" class="faq-toggle-icon" />
+              </div>
+            </button>
+            <div 
+              class="faq-accordion-collapse" 
+              id={`faq-answer-${i}`}
+              role="region"
+            >
+              <div class="faq-answer-inner">
+                <p class="faq-a-text">{faq.a}</p>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact CTA Card -->
+  <section class="section container" id="contact">
+    <div class="contact-card" data-animate="scale-up">
+      <div class="contact-inner">
+        <span class="label">Start a Conversation</span>
+        <h2 class="heading-2">Have an opportunity or project?<br/>Let's talk details.</h2>
+        <p class="body-lg contact-lead">
+          Whether you're looking to hire a junior developer or IT support technician, need a website or API built, or want to discuss a project, my inbox is always open.
+        </p>
+        <div class="contact-actions">
+          <a href={mailtoHref || 'mailto:hello@aqsan.dev'} class="btn btn-primary btn-lg">
+            <Icon name="lucide:mail" /> Email Me Directly
+          </a>
+          {whatsappHref && (
+            <a href={whatsappHref} target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-lg">
+              <Icon name="simple-icons:whatsapp" /> Chat on WhatsApp
+            </a>
+          )}
+        </div>
+      </div>
+      <div class="contact-glow" aria-hidden="true"></div>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  import gsap from 'gsap';
+  import ScrollTrigger from 'gsap/ScrollTrigger';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  document.addEventListener('astro:page-load', () => {
+    if (document.querySelector('.gs-reveal-services')) {
+      gsap.fromTo('.gs-reveal-services > *', 
+        { y: 25, autoAlpha: 0 }, 
+        { y: 0, autoAlpha: 1, duration: 0.7, stagger: 0.1, ease: 'power3.out', clearProps: 'all' }
+      );
+    }
+
+    // ── Interactive FAQ Accordion ──
+    const accordionItems = document.querySelectorAll<HTMLElement>('.faq-accordion-item');
+    accordionItems.forEach(item => {
+      const trigger = item.querySelector<HTMLButtonElement>('.faq-accordion-trigger');
+      if (!trigger) return;
+
+      trigger.addEventListener('click', () => {
+        const isOpen = item.classList.contains('is-open');
+
+        // Close other items for a clean single-open accordion feel
+        accordionItems.forEach(otherItem => {
+          if (otherItem !== item) {
+            otherItem.classList.remove('is-open');
+            const otherTrigger = otherItem.querySelector<HTMLButtonElement>('.faq-accordion-trigger');
+            if (otherTrigger) otherTrigger.setAttribute('aria-expanded', 'false');
+          }
+        });
+
+        if (isOpen) {
+          item.classList.remove('is-open');
+          trigger.setAttribute('aria-expanded', 'false');
+        } else {
+          item.classList.add('is-open');
+          trigger.setAttribute('aria-expanded', 'true');
+        }
+      });
+    });
+  });
+</script>
+
+<style>
+  .pt-0 {
+    padding-top: 0;
+  }
+
+  .services-hero {
+    max-width: 800px;
+    margin-bottom: var(--space-3xl);
+  }
+
+  .services-hero .label {
+    margin-bottom: var(--space-md);
+    display: block;
+  }
+
+  .services-hero em {
+    font-weight: 300;
+  }
+
+  .service-intro {
+    margin-top: var(--space-xl);
+    max-width: 640px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+  }
+
+  .section-label {
+    margin-bottom: var(--space-3xl);
+  }
+
+  .section-label .label {
+    margin-bottom: var(--space-sm);
+    display: inline-block;
+  }
+
+  .section-label .heading-2 {
+    margin-bottom: var(--space-xs);
+  }
+
+  .subtitle-text {
+    max-width: 600px;
+    margin-top: var(--space-xs);
+    color: var(--text-secondary);
+  }
+
+  /* Services Grid */
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-xl);
+    align-items: stretch;
+  }
+
+  .service-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-2xl);
+    padding: clamp(1.5rem, 2.5vw, 2rem);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    transition: transform 0.35s var(--ease-out-expo), border-color 0.35s ease, box-shadow 0.35s ease;
+  }
+
+  .service-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-4px);
+    box-shadow: 0 16px 36px -10px rgba(0, 0, 0, 0.15), var(--shadow-glow);
+  }
+
+  .service-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-md);
+  }
+
+  .service-icon-box {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-lg);
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .service-icon {
+    width: 22px;
+    height: 22px;
+    color: var(--accent);
+  }
+
+  .service-category-badge {
+    font-size: 0.725rem;
+    font-weight: 600;
+    color: var(--accent);
+    background: var(--accent-subtle);
+    border: 1px solid var(--accent);
+    padding: 0.2rem 0.65rem;
+    border-radius: var(--radius-full);
+    letter-spacing: 0.03em;
+  }
+
+  .service-title {
+    font-size: 1.25rem;
+    line-height: 1.3;
+    margin-bottom: var(--space-xs);
+    color: var(--text-primary);
+  }
+
+  .service-desc {
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: var(--space-md);
+    font-size: 0.875rem;
+  }
+
+  .service-divider {
+    height: 1px;
+    background: var(--border);
+    margin-bottom: var(--space-md);
+  }
+
+  .service-points-section {
+    margin-bottom: var(--space-lg);
+  }
+
+  .points-label {
+    font-size: 0.725rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    display: block;
+    margin-bottom: var(--space-sm);
+  }
+
+  .points-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+  }
+
+  .points-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    font-size: 0.8125rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+  }
+
+  .check-icon {
+    width: 15px;
+    height: 15px;
+    color: var(--accent);
+    flex-shrink: 0;
+    margin-top: 0.15rem;
+  }
+
+  .service-tools {
+    margin-top: auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    padding-top: var(--space-md);
+    border-top: 1px dashed var(--border);
+  }
+
+  .service-tool-chip {
+    font-size: 0.725rem;
+    color: var(--text-muted);
+    background: var(--bg-primary);
+    padding: 0.2rem 0.55rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    transition: color 0.2s ease, border-color 0.2s ease;
+  }
+
+  .service-card:hover .service-tool-chip {
+    color: var(--text-secondary);
+    border-color: var(--border-hover);
+  }
+
+  @media (max-width: 1024px) {
+    .services-grid {
+      grid-template-columns: 1fr;
+      gap: var(--space-lg);
+    }
+  }
+
+  /* Engagement Models */
+  .models-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--space-xl);
+  }
+
+  .model-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-2xl);
+    padding: var(--space-2xl);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .model-card:hover {
+    border-color: var(--border-hover);
+    transform: translateY(-3px);
+  }
+
+  .model-card.is-popular {
+    border-color: var(--accent);
+    box-shadow: 0 15px 35px -10px var(--accent-glow);
+  }
+
+  .model-badge {
+    align-self: flex-start;
+    padding: 0.25rem 0.65rem;
+    border-radius: var(--radius-full);
+    background: var(--accent-subtle);
+    color: var(--accent);
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-bottom: var(--space-lg);
+    border: 1px solid var(--accent);
+  }
+
+  .model-title {
+    font-size: 1.35rem;
+    margin-bottom: var(--space-sm);
+  }
+
+  .model-desc {
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: var(--space-xl);
+  }
+
+  .model-features {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .model-features li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+  }
+
+  .model-check {
+    width: 17px;
+    height: 17px;
+    color: var(--accent);
+    flex-shrink: 0;
+    margin-top: 0.15rem;
+  }
+
+  /* Process */
+  .process-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-lg);
+  }
+
+  .process-step {
+    padding: var(--space-2xl);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    background: var(--surface);
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease, border-color 0.3s ease;
+  }
+
+  .process-step:hover {
+    transform: translateY(-3px);
+    border-color: var(--border-hover);
+  }
+
+  .step-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-md);
+  }
+
+  .step-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    opacity: 0.6;
+  }
+
+  .process-num {
+    font-size: 2.25rem;
+    font-weight: 800;
+    color: var(--accent);
+    display: block;
+    line-height: 1;
+    opacity: 0.9;
+  }
+
+  .process-title {
+    margin-bottom: var(--space-sm);
+    font-size: 1.25rem;
+  }
+
+  .process-desc {
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  /* FAQ Section - Split Modern Layout */
+  .faq-section {
+    padding-block: var(--space-4xl);
+  }
+
+  .faq-layout {
+    display: grid;
+    grid-template-columns: 1fr 1.35fr;
+    gap: var(--space-3xl);
+    align-items: flex-start;
+  }
+
+  .faq-sidebar {
+    position: sticky;
+    top: 100px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .faq-sidebar .label {
+    margin-bottom: var(--space-sm);
+    display: inline-block;
+  }
+
+  .faq-main-title {
+    margin-bottom: var(--space-md);
+    line-height: 1.15;
+  }
+
+  .faq-main-title em {
+    font-weight: 300;
+  }
+
+  .faq-sidebar-desc {
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin-bottom: var(--space-2xl);
+    max-width: 440px;
+  }
+
+  /* Help Card in FAQ Sidebar */
+  .faq-help-card {
+    display: flex;
+    gap: var(--space-md);
+    padding: var(--space-xl);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    max-width: 440px;
+    transition: border-color 0.3s ease;
+  }
+
+  .faq-help-card:hover {
+    border-color: var(--border-hover);
+  }
+
+  .help-card-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-md);
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+
+  .help-card-content {
+    flex: 1;
+  }
+
+  .help-card-title {
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+  }
+
+  .help-card-text {
+    color: var(--text-secondary);
+    margin-bottom: var(--space-sm);
+    line-height: 1.5;
+  }
+
+  .help-card-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--accent);
+    transition: gap 0.2s ease;
+    text-decoration: none;
+  }
+
+  .help-card-link:hover {
+    gap: 0.55rem;
+  }
+
+  /* Accordion List */
+  .faq-accordion-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+
+  .faq-accordion-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    transition: border-color 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .faq-accordion-item:hover {
+    border-color: var(--border-hover);
+  }
+
+  .faq-accordion-item.is-open {
+    border-color: var(--accent);
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.25);
+  }
+
+  .faq-accordion-trigger {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-md);
+    padding: var(--space-xl) var(--space-2xl);
+    background: transparent;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    color: var(--text-primary);
+    font-family: inherit;
+  }
+
+  .faq-trigger-left {
+    display: flex;
+    align-items: center;
+    gap: var(--space-lg);
+    flex: 1;
+  }
+
+  .faq-index {
+    font-size: 0.875rem;
+    color: var(--accent);
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    opacity: 0.85;
+    flex-shrink: 0;
+  }
+
+  .faq-q-text {
+    font-size: 1.125rem;
+    font-weight: 700;
+    line-height: 1.4;
+    transition: color 0.25s ease;
+  }
+
+  .faq-icon-bubble {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+  }
+
+  .faq-toggle-icon {
+    width: 16px;
+    height: 16px;
+    color: var(--text-secondary);
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), color 0.25s ease;
+  }
+
+  .faq-accordion-item.is-open .faq-icon-bubble {
+    background: var(--accent-subtle);
+    border-color: var(--accent);
+  }
+
+  .faq-accordion-item.is-open .faq-toggle-icon {
+    transform: rotate(45deg);
+    color: var(--accent);
+  }
+
+  .faq-accordion-collapse {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .faq-accordion-item.is-open .faq-accordion-collapse {
+    grid-template-rows: 1fr;
+  }
+
+  .faq-answer-inner {
+    overflow: hidden;
+  }
+
+  .faq-a-text {
+    padding: 0 var(--space-2xl) var(--space-xl) calc(var(--space-2xl) + 2.25rem);
+    color: var(--text-secondary);
+    line-height: 1.75;
+    font-size: 0.9375rem;
+    margin: 0;
+  }
+
+  /* Contact CTA */
+  .contact-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-2xl);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .contact-inner {
+    padding: var(--space-4xl);
+    position: relative;
+    z-index: 1;
+  }
+
+  .contact-inner .label {
+    margin-bottom: var(--space-md);
+    display: block;
+  }
+
+  .contact-lead {
+    margin-top: var(--space-md);
+    max-width: 600px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+  }
+
+  .contact-actions {
+    display: flex;
+    gap: var(--space-md);
+    margin-top: var(--space-2xl);
+    flex-wrap: wrap;
+  }
+
+  .btn-lg {
+    padding: 0.875rem 2rem;
+    font-size: 1rem;
+  }
+
+  .contact-glow {
+    position: absolute;
+    bottom: -40%;
+    right: -10%;
+    width: 350px;
+    height: 350px;
+    background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+    filter: blur(60px);
+    pointer-events: none;
+  }
+
+  /* Responsive */
+  @media (max-width: 1024px) {
+    .process-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (max-width: 900px) {
+    .faq-layout {
+      grid-template-columns: 1fr;
+      gap: var(--space-2xl);
+    }
+
+    .faq-sidebar {
+      position: static;
+    }
+
+    .faq-sidebar-desc {
+      max-width: 100%;
+    }
+
+    .faq-help-card {
+      max-width: 100%;
+    }
+
+    .faq-accordion-trigger {
+      padding: var(--space-lg) var(--space-xl);
+    }
+
+    .faq-a-text {
+      padding: 0 var(--space-xl) var(--space-lg) var(--space-xl);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .services-grid {
+      grid-template-columns: 1fr;
+      gap: var(--space-xl);
+    }
+
+    .service-card {
+      padding: var(--space-xl);
+    }
+
+    .models-grid {
+      grid-template-columns: 1fr;
+      gap: var(--space-md);
+    }
+
+    .model-card {
+      padding: var(--space-xl);
+    }
+
+    .process-grid {
+      grid-template-columns: 1fr;
+      gap: var(--space-md);
+    }
+
+    .process-step {
+      padding: var(--space-xl);
+    }
+
+    .contact-inner {
+      padding: var(--space-2xl);
+    }
+
+    .contact-actions {
+      flex-direction: column;
+    }
+
+    .contact-actions .btn {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+</style>

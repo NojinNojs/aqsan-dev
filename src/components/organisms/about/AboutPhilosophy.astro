@@ -1,0 +1,86 @@
+---
+---
+<section class="section container philosophy-section">
+  <div class="section-label gs-reveal-phil">
+    <span class="label">Engineering Mindset</span>
+    <h2 class="heading-1">Pragmatic,<br/>curious & honest</h2>
+  </div>
+  <p class="body-lg philosophy-intro gs-reveal-phil">
+    I care about understanding how systems actually work under the hood — whether I'm troubleshooting network cables or debugging an API endpoint. I believe in writing straightforward code, keeping database schemas clean, and building software that just works without unnecessary complexity.
+  </p>
+</section>
+
+<script>
+  import gsap from 'gsap';
+  import ScrollTrigger from 'gsap/ScrollTrigger';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  document.addEventListener('astro:page-load', () => {
+    if (!document.querySelector('.philosophy-section')) return;
+    
+    // Label reveal
+    gsap.fromTo('.gs-reveal-phil', 
+      { y: 40, autoAlpha: 0 },
+      { y: 0, autoAlpha: 1, duration: 1.0, ease: 'expo.out', clearProps: 'all',
+        scrollTrigger: { trigger: '.philosophy-section', start: 'top 85%' }
+      }
+    );
+
+    // Storytelling Text Scrubbing
+    const introText = document.querySelector<HTMLElement>('.philosophy-intro');
+    if (introText && !introText.dataset.split) {
+      introText.dataset.split = 'true';
+      const text = (introText.textContent || '').trim();
+      introText.innerHTML = '';
+      text.split(/\s+/).forEach((word: string) => {
+        const span = document.createElement('span');
+        span.textContent = word + ' ';
+        span.style.opacity = '0.2';
+        span.className = 'phil-word';
+        introText.appendChild(span);
+      });
+
+      gsap.to('.phil-word', {
+        opacity: 1,
+        stagger: 0.1,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '.philosophy-section',
+          start: 'top 60%',
+          end: 'bottom 70%',
+          scrub: true,
+        }
+      });
+    }
+  });
+</script>
+
+<style>
+  .philosophy-section {
+    text-align: center;
+    padding: var(--space-5xl) 0;
+  }
+  .philosophy-section .section-label {
+    margin-bottom: var(--space-3xl);
+  }
+  .philosophy-section .section-label .label {
+    display: block;
+    margin-bottom: var(--space-sm);
+  }
+  .philosophy-intro {
+    max-width: 800px;
+    margin: 0 auto;
+    color: var(--text-primary);
+    line-height: 1.8;
+    font-size: clamp(1.25rem, 3vw, 2.25rem);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+  @media (max-width: 768px) {
+    .philosophy-section {
+      padding: var(--space-3xl) var(--space-md);
+      text-align: left;
+    }
+  }
+</style>

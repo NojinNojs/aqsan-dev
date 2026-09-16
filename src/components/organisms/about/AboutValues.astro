@@ -1,0 +1,309 @@
+---
+import { Icon } from 'astro-icon/components';
+
+interface Props {
+  values: { icon: string; title: string; desc: string }[];
+}
+
+const { values } = Astro.props;
+---
+<section class="values-pin-section">
+  <div class="values-pin-wrapper">
+    
+    <!-- Pinned Header on the left side (or top) -->
+    <div class="values-header container">
+      <span class="label">Core Values</span>
+      <h2 class="heading-1">What I<br/>stand for</h2>
+      <p class="body-lg values-desc mt-4 text-secondary">
+        These are the core principles that guide my work. I don't just write code; I engineer solutions with these values in mind.
+      </p>
+    </div>
+
+    <!-- Horizontal scrolling track -->
+    <div class="values-scroll-container">
+      <div class="values-track">
+        {values.map((v, i) => (
+          <div class="value-card-hz">
+            <div class="card-inner">
+              <span class="card-number mono">0{i + 1}</span>
+              <div class="value-icon-wrap">
+                <Icon name={v.icon} class="value-icon" />
+              </div>
+              <h3 class="heading-2">{v.title}</h3>
+              <p class="body-lg">{v.desc}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+    
+  </div>
+</section>
+
+  <script>
+  import gsap from 'gsap';
+  import ScrollTrigger from 'gsap/ScrollTrigger';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  document.addEventListener('astro:page-load', () => {
+    if (!document.querySelector('.values-pin-section')) return;
+    
+    const mm = gsap.matchMedia();
+
+    mm.add("(min-width: 769px)", () => {
+      const track = document.querySelector('.values-track') as HTMLElement;
+      if (!track) return;
+
+      // Ensure exact calculation so the last card doesn't clip
+      // The distance to scroll is the entire width of the track minus the viewport width, 
+      // plus some padding to keep it away from the right edge.
+      const getScrollAmount = () => {
+        const trackWidth = track.scrollWidth;
+        const viewportWidth = window.innerWidth;
+        // The container has left padding which pushes the track right.
+        // We want the right side of the track to align with the right side of the viewport (with some padding).
+        return -(trackWidth - viewportWidth + 60); 
+      };
+
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: ".values-pin-section",
+          start: "top top",
+          end: () => `+=${track.scrollWidth}`, // scroll distance proportional to track width
+          pin: true,
+          scrub: true, // Let Lenis handle the smoothing natively
+          invalidateOnRefresh: true
+        }
+      });
+
+      tl.to(track, {
+        x: getScrollAmount,
+        ease: "none"
+      });
+
+      // Floating effect for icons
+      gsap.utils.toArray('.value-icon-wrap').forEach((icon: any, i: number) => {
+        gsap.to(icon, {
+          y: -10,
+          duration: 2 + i * 0.2,
+          ease: 'sine.inOut',
+          repeat: -1,
+          yoyo: true,
+          delay: i * 0.1
+        });
+      });
+    });
+
+    mm.add("(max-width: 768px)", () => {
+      // Mobile standard fade in for the whole track, swipe is native CSS
+      gsap.fromTo('.values-track', 
+        { y: 30, autoAlpha: 0 },
+        { y: 0, autoAlpha: 1, duration: 0.8, ease: 'expo.out', clearProps: 'all',
+          scrollTrigger: { trigger: '.values-scroll-container', start: 'top 85%' }
+        }
+      );
+    });
+
+    document.addEventListener('astro:before-swap', () => {
+      mm.revert();
+    }, { once: true });
+
+    // Fix for pinned sections: Recalculate heights after web fonts load
+    // so the pin-spacer correctly matches the actual text height.
+    if (document.fonts) {
+      document.fonts.ready.then(() => {
+        ScrollTrigger.refresh();
+      });
+    }
+  });
+</script>
+
+<style>
+  .values-pin-section {
+    position: relative;
+    /* Removed background: var(--bg-secondary) so it blends perfectly with the rest of the page */
+    /* Clip horizontally to hide the scroll track, but allow vertical overflow */
+    overflow-x: clip;
+  }
+
+  .values-pin-wrapper {
+    /* Use min-height so it doesn't strictly chop content on small laptops */
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-top: var(--space-4xl);
+    padding-bottom: var(--space-4xl);
+  }
+
+  .values-header {
+    flex-shrink: 0;
+    margin-bottom: var(--space-3xl);
+  }
+
+  .values-header .label {
+    display: block;
+    margin-bottom: var(--space-sm);
+    color: var(--accent);
+  }
+
+  .values-desc {
+    max-width: 600px;
+    margin-top: var(--space-md);
+    color: var(--text-secondary);
+  }
+
+  .values-scroll-container {
+    padding-left: max(1.25rem, calc((100vw - var(--container)) / 2));
+    padding-bottom: var(--space-4xl);
+  }
+
+  .values-track {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: var(--space-2xl);
+    width: max-content;
+    padding-right: max(1.25rem, calc((100vw - var(--container)) / 2)); /* Padding on the right to match left */
+  }
+
+  .value-card-hz {
+    width: clamp(280px, 30vw, 380px);
+    flex-shrink: 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-2xl);
+    padding: var(--space-2xl);
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.4s ease;
+  }
+
+  .value-card-hz:hover {
+    border-color: var(--accent);
+  }
+
+  .card-number {
+    position: absolute;
+    top: -10px;
+    right: 20px;
+    font-size: 6rem;
+    font-weight: 800;
+    color: var(--bg-tertiary);
+    opacity: 0.2;
+    z-index: 0;
+    user-select: none;
+  }
+
+  .card-inner {
+    position: relative;
+    z-index: 1;
+  }
+
+  .value-icon-wrap {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--space-lg);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .value-icon {
+    width: 24px;
+    height: 24px;
+    color: var(--accent);
+  }
+
+  .value-card-hz h3 {
+    margin-bottom: var(--space-sm);
+  }
+
+  .value-card-hz p {
+    color: var(--text-secondary);
+    line-height: 1.6;
+    font-size: 0.95rem;
+  }
+
+  @media (max-width: 768px) {
+    .values-pin-wrapper {
+      min-height: auto;
+      padding-top: var(--space-2xl);
+      padding-bottom: var(--space-2xl);
+    }
+    
+    .values-scroll-container {
+      padding-left: 0;
+      padding-right: 0;
+      width: 100%;
+      margin: 0;
+    }
+
+    .values-track {
+      width: 100%;
+      flex-direction: row;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      padding-left: clamp(1rem, 4vw, 2rem);
+      padding-right: clamp(1rem, 4vw, 2rem);
+      padding-bottom: var(--space-md);
+      gap: var(--space-md);
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    
+    .values-track::-webkit-scrollbar {
+      display: none;
+    }
+
+    .value-card-hz {
+      width: 82vw;
+      max-width: 320px;
+      scroll-snap-align: center;
+      padding: 1.5rem;
+    }
+  }
+
+  /* Compact layout for short laptop screens to prevent vertical cutoff during GSAP pinning */
+  @media (max-height: 850px) and (min-width: 769px) {
+    .values-pin-wrapper {
+      padding-top: var(--space-2xl);
+      padding-bottom: var(--space-2xl);
+    }
+    .values-header {
+      margin-bottom: var(--space-xl);
+    }
+    .values-scroll-container {
+      padding-bottom: var(--space-xl);
+    }
+    .value-card-hz {
+      padding: var(--space-xl);
+      width: clamp(260px, 25vw, 320px);
+    }
+    .value-icon-wrap {
+      width: 40px;
+      height: 40px;
+      margin-bottom: var(--space-sm);
+    }
+    .value-icon {
+      width: 20px;
+      height: 20px;
+    }
+    .value-card-hz h3 {
+      font-size: 1.1rem;
+      margin-bottom: var(--space-xs);
+    }
+    .value-card-hz p {
+      font-size: 0.85rem;
+      line-height: 1.4;
+    }
+    .card-number {
+      font-size: 4rem;
+      top: -5px;
+    }
+  }
+</style>

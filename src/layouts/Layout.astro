@@ -1,23 +1,311 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import SmoothCursor from '../components/SmoothCursor.astro';
+import Preloader from '../components/Preloader.astro';
+import { ClientRouter } from 'astro:transitions';
+import {
+  siteUrl,
+  siteName,
+  authorName,
+  authorRole,
+  defaultDescription,
+  siteKeywords,
+  sameAsUrls,
+} from '../lib/site';
+
+interface Props {
+  title: string;
+  description?: string;
+  image?: string;
+  article?: boolean;
+  publishDate?: Date;
+  noindex?: boolean;
+}
+
+const {
+  title,
+  description = defaultDescription,
+  image = '/images/abstract.png',
+  article = false,
+  publishDate,
+  noindex = false,
+} = Astro.props;
+
+const pathname = Astro.url.pathname;
+const canonicalURL = new URL(pathname, Astro.site || siteUrl).toString();
+const socialImageURL = new URL(image, Astro.site || siteUrl).toString();
+
+// Formatted full page title
+const fullTitle = title.includes('Aqsan') ? title : `${title} | ${siteName}`;
+
+// Schema.org Person & WebSite JSON-LD
+const personSchema = {
+  '@type': 'Person',
+  '@id': `${siteUrl}/#person`,
+  name: authorName,
+  alternateName: ['Aqsan', 'Raffi Aqsan', 'Muhammad Raffi Aqsan'],
+  jobTitle: authorRole,
+  description: defaultDescription,
+  url: siteUrl,
+  sameAs: sameAsUrls,
+  knowsAbout: [
+    'Web Development',
+    'Fullstack Engineering',
+    'React',
+    'Next.js',
+    'Astro',
+    'Laravel',
+    'Express',
+    'TypeScript',
+    'Node.js',
+    'PostgreSQL',
+    'MySQL',
+    'IT Support & Hardware Troubleshooting',
+    'Computer Systems & Networking',
+    'Cybersecurity',
+    'Web3',
+  ],
+  alumniOf: {
+    '@type': 'EducationalOrganization',
+    name: 'Vocational High School (Software Engineering)',
+  },
+};
+
+const websiteSchema = {
+  '@type': 'WebSite',
+  '@id': `${siteUrl}/#website`,
+  url: siteUrl,
+  name: `${siteName} — ${authorName}`,
+  description: defaultDescription,
+  publisher: { '@id': `${siteUrl}/#person` },
+  inLanguage: 'en-US',
+};
+
+const webpageSchema: Record<string, any> = {
+  '@type': article ? 'BlogPosting' : 'WebPage',
+  '@id': `${canonicalURL}#webpage`,
+  url: canonicalURL,
+  name: fullTitle,
+  description: description,
+  isPartOf: { '@id': `${siteUrl}/#website` },
+  about: { '@id': `${siteUrl}/#person` },
+  inLanguage: 'en-US',
+};
+
+if (article && publishDate) {
+  webpageSchema.headline = title;
+  webpageSchema.datePublished = publishDate.toISOString();
+  webpageSchema.dateModified = publishDate.toISOString();
+  webpageSchema.author = { '@id': `${siteUrl}/#person` };
+  webpageSchema.publisher = { '@id': `${siteUrl}/#person` };
+  webpageSchema.image = socialImageURL;
+}
+
+const jsonLdGraph = {
+  '@context': 'https://schema.org',
+  '@graph': [personSchema, websiteSchema, webpageSchema],
+};
+---
+
 <!doctype html>
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<link rel="icon" href="/favicon.ico" />
 		<meta name="generator" content={Astro.generator} />
-		<title>Astro Basics</title>
+
+		<!-- Primary Meta Tags -->
+		<title>{fullTitle}</title>
+		<meta name="title" content={fullTitle} />
+		<meta name="description" content={description} />
+		<meta name="author" content={authorName} />
+		<meta name="keywords" content={siteKeywords.join(', ')} />
+		<meta name="robots" content={noindex ? "noindex, nofollow" : "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"} />
+		<meta name="googlebot" content={noindex ? "noindex, nofollow" : "index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1"} />
+		<link rel="canonical" href={canonicalURL} />
+		<meta name="theme-color" content="#09090b" />
+
+		<!-- Open Graph / Facebook / LinkedIn / WhatsApp -->
+		<meta property="og:type" content={article ? 'article' : 'website'} />
+		<meta property="og:url" content={canonicalURL} />
+		<meta property="og:title" content={fullTitle} />
+		<meta property="og:description" content={description} />
+		<meta property="og:image" content={socialImageURL} />
+		<meta property="og:image:alt" content={fullTitle} />
+		<meta property="og:site_name" content={siteName} />
+		<meta property="og:locale" content="en_US" />
+		{article && publishDate && (
+			<meta property="article:published_time" content={publishDate.toISOString()} />
+		)}
+
+		<!-- Twitter / X -->
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:url" content={canonicalURL} />
+		<meta name="twitter:title" content={fullTitle} />
+		<meta name="twitter:description" content={description} />
+		<meta name="twitter:image" content={socialImageURL} />
+		<meta name="twitter:image:alt" content={fullTitle} />
+
+		<!-- JSON-LD Structured Data for Google Knowledge Graph & Rich Results -->
+		<script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLdGraph)} />
+
+		<!-- Preload critical fonts -->
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+		<!-- Theme init to prevent FOUC -->
+		<script is:inline>
+			const getTheme = () => {
+				if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
+					return localStorage.getItem('theme');
+				}
+				return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+			};
+			
+			const setTheme = () => {
+				const theme = getTheme();
+				document.documentElement.setAttribute('data-theme', theme);
+				window.localStorage.setItem('theme', theme);
+			};
+
+			// Initial load
+			setTheme();
+			
+			// Re-apply theme immediately when DOM swaps during View Transitions
+			document.addEventListener('astro:after-swap', setTheme);
+		</script>
+		<ClientRouter />
 	</head>
 	<body>
-		<slot />
+		<Preloader />
+		<SmoothCursor />
+		<Header currentPath={pathname} />
+		<main id="main-content">
+			<slot />
+		</main>
+		<Footer />
+
+		<script>
+			import Lenis from 'lenis';
+			import gsap from 'gsap';
+			import ScrollTrigger from 'gsap/ScrollTrigger';
+
+			gsap.registerPlugin(ScrollTrigger);
+
+			let lenis: Lenis | null = null;
+
+			// Global GSAP ticker integration (added only once)
+			gsap.ticker.add((time: number) => {
+				if (lenis) lenis.raf(time * 1000);
+			});
+			gsap.ticker.lagSmoothing(0);
+
+			const updateScrollTrigger = () => ScrollTrigger.update();
+
+			// Cleanup before View Transition swap to prevent InvalidStateError
+			document.addEventListener('astro:before-swap', () => {
+				if (lenis) {
+					lenis.off('scroll', updateScrollTrigger);
+					lenis.destroy();
+					lenis = null;
+				}
+				ScrollTrigger.getAll().forEach(t => t.kill());
+				gsap.globalTimeline.clear();
+				
+				// Strip GSAP inline styles so cached pages don't start with opacity: 0
+				gsap.set('main *, .mobile-link, .mobile-cta', { clearProps: 'transform,opacity,filter,visibility' });
+
+				// Reset any stray inline styles from mobile menu
+				document.body.style.overflow = '';
+			});
+
+			// Re-initialize GSAP and Lenis on every view transition
+			document.addEventListener('astro:page-load', () => {
+				// Initialize Lenis with premium settings
+				lenis = new Lenis({
+					duration: 1.5,
+					easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+					orientation: 'vertical',
+					gestureOrientation: 'vertical',
+					wheelMultiplier: 1,
+					smoothWheel: true,
+					syncTouch: false, /* Must be false to allow browser UI to hide */
+					touchMultiplier: 1,
+				});
+				
+				// Expose globally for components to control scroll state
+				(window as any).lenis = lenis;
+
+				// Sync Lenis with GSAP ScrollTrigger
+				lenis.on('scroll', updateScrollTrigger);
+
+				// Wait a tiny bit for DOM to settle before refreshing ScrollTrigger
+				setTimeout(() => ScrollTrigger.refresh(), 50);
+
+				// ── Centralized Scroll-driven Animations for [data-animate] ──
+				// This prevents duplicate execution bugs across page transitions!
+				const animateElements = document.querySelectorAll('[data-animate]');
+				animateElements.forEach(el => {
+					const type = el.getAttribute('data-animate');
+					const delay = parseFloat(el.getAttribute('data-delay') || '0');
+
+					const config: gsap.TweenVars = {
+						scrollTrigger: {
+							trigger: el,
+							start: 'top 88%',
+							toggleActions: 'play none none none',
+						},
+						duration: 1.2, /* Increased duration for more relaxed reveal */
+						ease: 'power4.out', /* Softer, longer tail ease */
+						delay,
+						overwrite: 'auto',
+					};
+
+					if (type === 'fade-up') {
+						gsap.fromTo(el, 
+							{ y: 40, autoAlpha: 0 },
+							{ ...config, y: 0, autoAlpha: 1, clearProps: 'all' }
+						);
+					} else if (type === 'scale-up') {
+						gsap.fromTo(el, 
+							{ scale: 0.96, autoAlpha: 0 },
+							{ ...config, scale: 1, autoAlpha: 1, clearProps: 'all' }
+						);
+					}
+				});
+				
+				// Force ScrollTrigger to recalculate after all GSAP setups are done
+				ScrollTrigger.refresh();
+
+			});
+		</script>
 	</body>
 </html>
 
-<style>
-	html,
-	body {
-		margin: 0;
-		width: 100%;
-		height: 100%;
+<style is:global>
+	#main-content {
+		flex: 1;
+		/* Padding is handled by individual page heroes/sections now */
+	}
+
+	/* Lenis required base CSS */
+	html.lenis, html.lenis body {
+		height: auto;
+	}
+	.lenis.lenis-smooth {
+		scroll-behavior: auto !important;
+	}
+	.lenis.lenis-smooth [data-lenis-prevent] {
+		overscroll-behavior: contain;
+	}
+	.lenis.lenis-stopped {
+		overflow: hidden;
+	}
+	.lenis.lenis-smooth iframe {
+		pointer-events: none;
 	}
 </style>

@@ -1,0 +1,135 @@
+---
+---
+
+<script is:inline>
+  if (!sessionStorage.getItem('site_loaded')) {
+    document.documentElement.classList.add('is-preloading');
+  }
+</script>
+
+<div id="global-preloader" class="preloader" aria-hidden="true">
+  <div class="preloader-inner">
+    <svg viewBox="0 0 100 100" class="preloader-svg">
+      <path class="draw-path outline" d="M50 5 L95 25 L95 75 L50 95 L5 75 L5 25 Z" fill="none" stroke="currentColor" stroke-width="2" />
+      <path class="draw-path inner" d="M50 5 L50 95 M5 25 L95 75 M95 25 L5 75" fill="none" stroke="currentColor" stroke-width="1" />
+    </svg>
+    <div class="preloader-text">Initializing</div>
+    <div class="preloader-progress-bar">
+      <div class="preloader-progress"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  import gsap from 'gsap';
+
+  document.addEventListener('astro:page-load', () => {
+    const preloader = document.getElementById('global-preloader');
+    if (!preloader) return;
+
+    if (sessionStorage.getItem('site_loaded')) {
+      document.documentElement.classList.remove('is-preloading');
+      // Fire immediately for subsequent page navigations
+      requestAnimationFrame(() => {
+        document.dispatchEvent(new CustomEvent('preloader:done'));
+      });
+      return;
+    }
+
+    // Measure SVG paths
+    preloader.querySelectorAll('.draw-path').forEach((path: any) => {
+      const len = path.getTotalLength();
+      path.style.strokeDasharray = len;
+      path.style.strokeDashoffset = len;
+    });
+
+    const tl = gsap.timeline();
+
+    // Phase 1 — Draw the logo
+    tl.to('.draw-path.outline', {
+      strokeDashoffset: 0, duration: 1.3, ease: 'power3.inOut'
+    })
+    .to('.draw-path.inner', {
+      strokeDashoffset: 0, duration: 0.9, ease: 'power2.out'
+    }, '-=0.7')
+
+    // Phase 2 — Progress bar
+    .to('.preloader-progress', {
+      width: '100%', duration: 0.7, ease: 'expo.inOut'
+    }, '-=0.3')
+
+    // Phase 3 & 4 — Short hold (achieved via '+=0.15'), then fade out preloader
+    .to(preloader, {
+      opacity: 0,
+      duration: 0.6,
+      ease: 'power2.inOut',
+      onStart() {
+        // Just disable interaction during fade
+        preloader.style.pointerEvents = 'none';
+      },
+      onComplete() {
+        // Remove the CSS class ONLY when fade is fully complete
+        // Otherwise it instantly sets display: none and kills the animation!
+        document.documentElement.classList.remove('is-preloading');
+        document.documentElement.style.overflow = '';
+        
+        sessionStorage.setItem('site_loaded', 'true');
+        preloader.style.display = 'none';
+        
+        // Now the screen is 100% clear — tell hero to start
+        document.dispatchEvent(new CustomEvent('preloader:done'));
+      }
+    }, '+=0.15');
+  });
+</script>
+
+<style>
+  :global(html.is-preloading) #global-preloader { display: flex !important; }
+  :global(html.is-preloading) { overflow: hidden !important; }
+
+  .preloader {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    background: var(--bg-primary);
+    align-items: center;
+    justify-content: center;
+    color: var(--accent);
+    will-change: opacity;
+  }
+
+  .preloader-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-xl);
+  }
+
+  .preloader-svg {
+    width: 80px;
+    height: 80px;
+  }
+
+  .preloader-text {
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-primary);
+  }
+
+  .preloader-progress-bar {
+    width: 120px;
+    height: 2px;
+    background: var(--border);
+    overflow: hidden;
+    border-radius: 2px;
+  }
+
+  .preloader-progress {
+    width: 0%;
+    height: 100%;
+    background: var(--accent);
+  }
+</style>

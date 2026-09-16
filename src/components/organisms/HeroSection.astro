@@ -1,0 +1,503 @@
+---
+import { Icon } from 'astro-icon/components';
+
+const stats = [
+  { value: '2023–2026', label: 'Vocational Software Eng.' },
+  { value: '6 Months', label: 'IT Support & Dev at BRIN' },
+  { value: 'Open', label: 'Full-time · Intern · Freelance' },
+];
+---
+
+<section class="hero page-top" id="hero-section">
+  <!-- Gradient blob background -->
+  <div class="hero-bg" aria-hidden="true">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+  </div>
+
+  <div class="container hero-inner">
+    
+    <div class="hero-eyebrow gs-reveal-hero">
+      <div class="status-badge">
+        <span class="status-indicator" aria-hidden="true">
+          <span class="status-ping"></span>
+          <span class="status-dot"></span>
+        </span>
+        <span class="status-text">Open for Opportunities</span>
+        <span class="status-sep">·</span>
+        <span class="status-loc">Indonesia (UTC+7)</span>
+      </div>
+    </div>
+
+    <!-- Huge Typography -->
+    <div class="huge-typography" aria-hidden="true">
+      <div class="huge-line"><div class="huge-text ht-1">FULLSTACK</div></div>
+      <div class="huge-line align-right"><div class="huge-text ht-2 outline-text">DEVELOPER</div></div>
+    </div>
+
+    <!-- Structured Grid below typography -->
+    <div class="hero-grid">
+      <div class="hero-bio gs-reveal-hero">
+        <p class="body-lg hero-sub">
+          I'm Aqsan — a junior software developer and IT support technician with hands-on experience from a 6-month internship at BRIN. I build web applications using tools like React, Next.js, Astro, Laravel, and Express, while staying flexible to learn whatever stack the job requires. Currently exploring cybersecurity, Web3, and systems.
+        </p>
+
+        <div class="hero-actions">
+          <a href="/projects" class="btn btn-primary">
+            <Icon name="lucide:folder-open" /> View Work
+          </a>
+          <a href="/about" class="btn btn-outline">
+            <Icon name="lucide:user" /> About Me
+          </a>
+        </div>
+      </div>
+
+      <div class="hero-stats-container gs-reveal-hero">
+        <div class="hero-stats">
+          {stats.map(stat => (
+            <div class="stat">
+              <span class="stat-value">{stat.value}</span>
+              <span class="stat-label label">{stat.label}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="scroll-indicator gs-reveal-hero" aria-hidden="true">
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<script>
+  import gsap from 'gsap';
+  import ScrollTrigger from 'gsap/ScrollTrigger';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  document.addEventListener('astro:page-load', () => {
+    const heroSection = document.getElementById('hero-section');
+    if (!heroSection) return;
+
+    // Immediately hide hero elements so there's no flash before animation
+    gsap.set(['.ht-1', '.ht-2'], { autoAlpha: 0, y: 40 });
+    gsap.set('.gs-reveal-hero', { autoAlpha: 0, y: 20 });
+
+    let heroTl: gsap.core.Timeline | null = null;
+
+    const runHeroEntrance = () => {
+      heroTl = gsap.timeline({
+        defaults: { ease: 'power2.out', overwrite: 'auto' }
+      });
+
+      heroTl
+        .to('.ht-1', { autoAlpha: 1, y: 0, duration: 1.0 })
+        .to('.ht-2', { autoAlpha: 1, y: 0, duration: 1.0 }, '-=0.7')
+        .to('.gs-reveal-hero', {
+          autoAlpha: 1, y: 0, duration: 0.8, stagger: 0.1
+        }, '-=0.5');
+    };
+
+    // First visit → wait for preloader to fully disappear
+    // Navigations → play immediately
+    if (!sessionStorage.getItem('site_loaded')) {
+      document.addEventListener('preloader:done', runHeroEntrance, { once: true });
+    } else {
+      runHeroEntrance();
+    }
+
+    // ── Floating blobs parallax ──
+    gsap.to('#hero-section .blob-1', {
+      y: -80, x: 30,
+      scrollTrigger: { trigger: '#hero-section', start: 'top top', end: 'bottom top', scrub: 1.5 },
+    });
+    gsap.to('#hero-section .blob-2', {
+      y: -50, x: -40,
+      scrollTrigger: { trigger: '#hero-section', start: 'top top', end: 'bottom top', scrub: 1.5 },
+    });
+
+    // ── Scroll indicator pulse ──
+    gsap.to('#hero-section .scroll-line', {
+      scaleY: 1, transformOrigin: 'top center', duration: 1.5, repeat: -1, yoyo: true, ease: 'power1.inOut',
+    });
+
+    // ── Mouse-linked parallax ──
+    const handleMouseMove = (e: MouseEvent) => {
+      const { clientX, clientY } = e;
+      const xPos = (clientX / window.innerWidth - 0.5) * 2;
+      const yPos = (clientY / window.innerHeight - 0.5) * 2;
+      gsap.to('#hero-section .blob-1', { x: xPos * 40, y: yPos * 40, duration: 2, ease: 'power3.out' });
+      gsap.to('#hero-section .blob-2', { x: xPos * -30, y: yPos * -30, duration: 2, ease: 'power3.out' });
+    };
+    heroSection.addEventListener('mousemove', handleMouseMove as EventListener);
+
+    // ── Parallax huge text on scroll ──
+    gsap.to('.huge-typography', {
+      y: -80, opacity: 0.1, filter: 'blur(5px)',
+      scrollTrigger: { trigger: '#hero-section', start: 'top top', end: '70% top', scrub: true },
+    });
+
+    // Cleanup on page transition
+    document.addEventListener('astro:before-swap', () => {
+      if (heroTl) heroTl.kill();
+      heroSection.removeEventListener('mousemove', handleMouseMove as EventListener);
+    }, { once: true });
+  });
+</script>
+
+<style>
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-top: max(120px, 15vh);
+    padding-bottom: 10vh;
+    overflow: hidden;
+    background-color: var(--bg-primary);
+    background-image: radial-gradient(var(--border) 1px, transparent 1px);
+    background-size: 40px 40px;
+    background-position: -19px -19px;
+  }
+
+  /* Fade out the dot pattern at the edges */
+  .hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center, transparent 0%, var(--bg-primary) 80%);
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+
+  .blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.5;
+  }
+
+  .blob-1 {
+    width: 50vw;
+    height: 50vw;
+    max-width: 500px;
+    max-height: 500px;
+    background: radial-gradient(circle, rgba(120,120,120,0.12) 0%, transparent 70%);
+    top: -10%;
+    right: -5%;
+  }
+
+  .blob-2 {
+    width: 40vw;
+    height: 40vw;
+    max-width: 400px;
+    max-height: 400px;
+    background: radial-gradient(circle, rgba(160,160,160,0.08) 0%, transparent 70%);
+    bottom: 10%;
+    left: -5%;
+  }
+
+  .hero-inner {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: center;
+  }
+
+  .hero-eyebrow {
+    margin-bottom: var(--space-xl);
+  }
+
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.45rem 1rem;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--border);
+    background: var(--surface);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    color: var(--text-secondary);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    line-height: 1;
+    white-space: nowrap;
+    box-shadow: var(--shadow-sm);
+    transition: border-color 0.3s ease, background-color 0.3s ease;
+  }
+
+  .status-badge:hover {
+    border-color: var(--border-hover);
+    color: var(--text-primary);
+  }
+
+  .status-indicator {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 8px;
+    height: 8px;
+    flex-shrink: 0;
+  }
+
+  .status-ping {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: var(--accent);
+    opacity: 0.75;
+    animation: statusPing 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+  }
+
+  .status-dot {
+    position: relative;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  @keyframes statusPing {
+    75%, 100% {
+      transform: scale(2.2);
+      opacity: 0;
+    }
+  }
+
+  .status-text {
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .status-sep {
+    color: var(--text-muted);
+    opacity: 0.5;
+  }
+
+  .status-loc {
+    color: var(--text-muted);
+    font-weight: 400;
+  }
+
+  .huge-typography {
+    display: flex;
+    flex-direction: column;
+    line-height: 1;
+    margin-bottom: var(--space-4xl);
+  }
+
+  .huge-line {
+    padding-bottom: 0.1em;
+    padding-top: 0.1em;
+  }
+  
+  .align-right {
+    align-self: flex-end;
+  }
+
+  .huge-text {
+    font-size: clamp(3rem, 9.5vw, 9.5rem);
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    color: var(--text-primary);
+    white-space: nowrap; /* CRITICAL: Prevent wrapping */
+    will-change: transform, opacity;
+  }
+
+  .outline-text {
+    color: transparent;
+    -webkit-text-stroke: 2px var(--text-primary);
+    /* Removed margin-left, using align-self: flex-end on parent instead */
+  }
+
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: var(--space-4xl);
+    align-items: flex-start; /* Changed from flex-end to prevent huge empty gap */
+    padding-top: var(--space-3xl);
+    border-top: 1px solid var(--border);
+  }
+
+  .hero-sub {
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin-bottom: var(--space-xl);
+    max-width: 500px;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: var(--space-md);
+    flex-wrap: wrap;
+  }
+
+  .hero-stats-container {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .hero-stats {
+    display: flex;
+    gap: var(--space-3xl);
+    flex-wrap: wrap;
+  }
+
+  .stat {
+    display: flex;
+    flex-direction: column;
+    padding-top: var(--space-md);
+    border-top: 1px solid var(--border);
+    min-width: 140px;
+    flex: 1;
+  }
+
+  .stat-value {
+    font-size: 2.25rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--text-primary);
+    display: block;
+    line-height: 1.2;
+  }
+
+  .stat-label {
+    margin-top: var(--space-xs);
+    display: block;
+    color: var(--text-muted);
+  }
+
+  .scroll-indicator {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    z-index: 2;
+  }
+
+  .scroll-line {
+    width: 1px;
+    height: 48px;
+    background: var(--text-muted);
+    transform: scaleY(0.3);
+    opacity: 0.5;
+  }
+
+  @media (max-width: 1024px) {
+    .huge-text {
+      font-size: clamp(3rem, 12vw, 9rem);
+    }
+    .hero-grid {
+      grid-template-columns: 1fr;
+      gap: var(--space-3xl);
+      align-items: flex-start;
+    }
+    .hero-stats-container {
+      justify-content: flex-start;
+    }
+    .hero-stats {
+      gap: var(--space-xl);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .hero {
+      padding-top: max(120px, 15vh);
+      padding-bottom: 6vh;
+    }
+    .hero-eyebrow {
+      margin-bottom: var(--space-md);
+    }
+    .status-badge {
+      font-size: 0.75rem;
+      padding: 0.35rem 0.85rem;
+      gap: 0.45rem;
+    }
+    .huge-typography {
+      margin-bottom: var(--space-xl);
+    }
+    .huge-text {
+      font-size: clamp(2.5rem, 11vw, 4.5rem);
+    }
+    .outline-text {
+      margin-left: 0;
+      -webkit-text-stroke: 1.5px var(--text-primary);
+    }
+    .hero-grid {
+      padding-top: var(--space-lg);
+      gap: var(--space-lg);
+      border-top: 1px solid var(--border);
+    }
+    .hero-sub {
+      font-size: 0.9375rem;
+      line-height: 1.65;
+      margin-bottom: var(--space-md);
+    }
+    .hero-actions {
+      display: flex;
+      gap: 0.65rem;
+    }
+    .hero-actions .btn {
+      flex: 1;
+      justify-content: center;
+      padding: 0.75rem 1rem;
+      font-size: 0.875rem;
+    }
+    .hero-stats-container {
+      width: 100%;
+      margin-top: var(--space-xs);
+    }
+    .hero-stats {
+      width: 100%;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.5rem;
+      padding: 0.875rem 0.75rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-sm);
+    }
+    .stat {
+      min-width: 0;
+      padding-top: 0;
+      border-top: none;
+      border-right: 1px solid var(--border);
+      padding-right: 0.35rem;
+    }
+    .stat:last-child {
+      border-right: none;
+      padding-right: 0;
+    }
+    .stat-value {
+      font-size: clamp(1rem, 3.4vw, 1.25rem);
+      font-weight: 800;
+      line-height: 1.2;
+    }
+    .stat-label {
+      font-size: 0.625rem;
+      line-height: 1.3;
+      margin-top: 0.25rem;
+      letter-spacing: 0.02em;
+    }
+  }
+</style>

@@ -1,0 +1,183 @@
+<section class="about-hero page-top">
+  
+  <div class="container hero-inner">
+    <div class="huge-typography" aria-hidden="true">
+      <div class="huge-line"><div class="huge-text ht-1">SOFTWARE</div></div>
+      <div class="huge-line"><div class="huge-text ht-2 outline-text">ENGINEER</div></div>
+    </div>
+
+    <div class="hero-bottom">
+      <div class="hero-bottom-left gs-reveal">
+        <span class="label">Muhammad Raffi Aqsan</span>
+      </div>
+      <div class="hero-bottom-right gs-reveal">
+        <p class="body-lg about-intro">
+          I'm a junior software engineer and IT support technician with a vocational background in Software Engineering (July 2023 – May 2026) and 6 months of internship experience at BRIN. I build pragmatic web applications and troubleshoot IT systems, with an active curiosity in cybersecurity and Web3.
+        </p>
+      </div>
+    </div>
+  </div>
+  
+  <div class="hero-bg-glow" aria-hidden="true"></div>
+</section>
+
+<script>
+  import gsap from 'gsap';
+  
+  document.addEventListener('astro:page-load', () => {
+    const heroSection = document.querySelector('.about-hero');
+    if (!heroSection) return;
+    
+    // Prevent flash of content
+    gsap.set(['.ht-1', '.ht-2'], { autoAlpha: 0, y: 40 });
+    gsap.set('.gs-reveal', { autoAlpha: 0, y: 20 });
+    gsap.set('.hero-bg-glow', { autoAlpha: 0, scale: 0.1 });
+
+    const runHeroEntrance = () => {
+      const heroTl = gsap.timeline({ defaults: { ease: 'power3.out', overwrite: 'auto' } });
+      
+      heroTl
+        .to('.ht-1', { autoAlpha: 1, y: 0, duration: 1.0 })
+        .to('.ht-2', { autoAlpha: 1, y: 0, duration: 1.0 }, '-=0.7')
+        .to('.gs-reveal', { 
+          autoAlpha: 1, y: 0, duration: 0.8, stagger: 0.15 
+        }, '-=0.5')
+        .to('.hero-bg-glow', { 
+          autoAlpha: 0.5, scale: 1, duration: 2.0, ease: 'power2.out' 
+        }, '-=1.0');
+    };
+
+    if (!sessionStorage.getItem('site_loaded')) {
+      document.addEventListener('preloader:done', runHeroEntrance, { once: true });
+    } else {
+      runHeroEntrance();
+    }
+  });
+</script>
+
+<style>
+  .about-hero {
+    position: relative;
+    min-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-bottom: 5vh;
+    /* Use clip on x-axis to stop horizontal scrollbars from glow, but allow vertical bleed */
+    overflow-x: clip;
+    background-color: var(--bg-primary);
+    background-image: radial-gradient(var(--border) 1px, transparent 1px);
+    background-size: 40px 40px;
+    background-position: -19px -19px;
+  }
+
+  /* Fade out the dot pattern at the edges */
+  .about-hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, transparent 0%, var(--bg-primary) 100%);
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .hero-inner {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: center;
+    gap: var(--space-3xl);
+  }
+
+  .huge-typography {
+    display: flex;
+    flex-direction: column;
+    line-height: 0.9;
+    margin-top: var(--space-2xl);
+  }
+
+  .huge-line {
+    overflow: hidden;
+    padding-bottom: 0.1em; /* Prevent descenders from clipping */
+    padding-top: 0.1em;
+  }
+
+  .huge-text {
+    font-size: clamp(3rem, 12vw, 12rem);
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    color: var(--text-primary);
+    will-change: transform, opacity;
+  }
+
+  .outline-text {
+    color: transparent;
+    -webkit-text-stroke: 2px var(--text-primary);
+    margin-left: 8vw; /* Staggered indent */
+  }
+
+  .hero-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-top: auto;
+    gap: var(--space-2xl);
+  }
+
+  .hero-bottom-left .label {
+    display: block;
+    color: var(--accent);
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-size: 0.875rem;
+  }
+
+  .hero-bottom-right {
+    max-width: 400px;
+  }
+
+  .about-intro {
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .hero-bg-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80vw;
+    height: 80vw;
+    background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+    border-radius: 50%;
+    filter: blur(100px);
+    z-index: 1; /* Higher than ::after (which is 0 or default) to ensure it bleeds out */
+    pointer-events: none;
+    opacity: 0.5;
+  }
+  
+  @media (max-width: 768px) {
+    .about-hero {
+      min-height: 80vh;
+      justify-content: flex-end;
+    }
+    .huge-typography {
+      margin-top: 0;
+    }
+    .outline-text {
+      margin-left: 0;
+      -webkit-text-stroke: 1px var(--text-primary);
+    }
+    .hero-bottom {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--space-md);
+      margin-top: var(--space-3xl);
+    }
+  }
+</style>

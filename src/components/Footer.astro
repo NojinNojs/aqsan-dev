@@ -1,0 +1,202 @@
+---
+const currentYear = new Date().getFullYear();
+import { Icon } from 'astro-icon/components';
+import { socials } from '../lib/site';
+---
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <span class="logo-mark">Aqsan<span class="dot">.Dev</span></span>
+        <p class="body-sm footer-bio">
+          Junior software developer & IT support technician. Building practical web apps and troubleshooting systems with care.
+        </p>
+      </div>
+
+      <nav class="footer-nav" aria-label="Footer navigation">
+        <div class="footer-col">
+          <span class="label">Navigation</span>
+          <ul>
+            <li><a href="/about" class="hover-underline"><Icon name="lucide:user" /> About</a></li>
+            <li><a href="/projects" class="hover-underline"><Icon name="lucide:briefcase" /> Projects</a></li>
+            <li><a href="/services" class="hover-underline"><Icon name="lucide:wrench" /> Services</a></li>
+            <li><a href="/blog" class="hover-underline"><Icon name="lucide:pen-tool" /> Blog</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <span class="label">Connect</span>
+          <ul>
+            {socials.map((link) => (
+              <li>
+                <a
+                  href={link.href}
+                  class="hover-underline"
+                  {...(link.external === false
+                    ? {}
+                    : { target: '_blank', rel: 'noopener noreferrer' })}
+                >
+                  <Icon name={link.icon} /> {link.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </nav>
+    </div>
+
+    <div class="footer-legal">
+      <p class="body-sm">&copy; {currentYear} Aqsan. Built with Astro.</p>
+    </div>
+  </div>
+
+  <!-- Massive Watermark Typography -->
+  <div class="footer-massive-text" aria-hidden="true">
+    AQSAN
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    position: relative;
+    border-top: 1px solid var(--border);
+    padding-top: var(--space-4xl);
+    margin-top: auto;
+    overflow: hidden;
+    background: var(--bg-primary);
+  }
+
+  .footer-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--space-4xl);
+    margin-bottom: var(--space-4xl);
+  }
+
+  .footer-brand {
+    max-width: 320px;
+  }
+
+  .logo-mark {
+    font-size: 2rem;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    display: block;
+    margin-bottom: var(--space-md);
+  }
+
+  .dot {
+    color: var(--accent);
+  }
+
+  .footer-bio {
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  .footer-nav {
+    display: flex;
+    gap: var(--space-4xl);
+  }
+
+  .footer-col .label {
+    margin-bottom: var(--space-lg);
+    display: block;
+    font-weight: 600;
+    color: var(--text-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 0.75rem;
+  }
+
+  .footer-col ul {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+
+  .footer-col a {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    transition: color 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .hover-underline {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .hover-underline::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 1px;
+    bottom: -2px;
+    left: 0;
+    background-color: var(--text-primary);
+    transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  
+  .hover-underline:hover {
+    color: var(--text-primary);
+  }
+  
+  .hover-underline:hover::after {
+    width: 100%;
+  }
+
+  .footer-legal {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: var(--space-2xl);
+    color: var(--text-muted);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05); /* Separator before massive text */
+  }
+
+  .footer-massive-text {
+    font-size: 21vw;
+    font-weight: 900;
+    line-height: 0.75;
+    text-align: center;
+    color: var(--text-primary);
+    opacity: 0.03;
+    pointer-events: none;
+    user-select: none;
+    transform: translateY(15%); /* Cut off slightly at the bottom */
+  }
+
+  @media (max-width: 768px) {
+    .footer-top {
+      flex-direction: column;
+      gap: var(--space-3xl);
+    }
+
+    .footer-nav {
+      width: 100%;
+      flex-direction: column;
+      gap: var(--space-2xl);
+    }
+
+    .footer-col ul {
+      flex-direction: row;
+      flex-wrap: wrap;
+      column-gap: var(--space-2xl);
+      row-gap: var(--space-md);
+    }
+
+    .footer-legal {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: var(--space-md);
+    }
+    
+    .footer-massive-text {
+      font-size: 26vw;
+    }
+  }
+</style>

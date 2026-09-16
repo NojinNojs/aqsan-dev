@@ -1,11 +1,68 @@
 ---
-import Welcome from '../components/Welcome.astro';
 import Layout from '../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+// Atomic Organisms
+import HeroSection from '../components/organisms/HeroSection.astro';
+import MarqueeSection from '../components/organisms/MarqueeSection.astro';
+import ProjectsSection from '../components/organisms/ProjectsSection.astro';
+import CtaSection from '../components/organisms/CtaSection.astro';
+import BlogSection from '../components/organisms/BlogSection.astro';
+
+// Fetching data at the Page level
+const projects = await getCollection('projects');
+const featuredProjects = projects.filter(p => p.data.featured).slice(0, 3);
+
+const posts = await getCollection('blog');
+const latestPosts = posts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()).slice(0, 3);
 ---
 
-<Layout>
-	<Welcome />
+<Layout 
+  title="Muhammad Raffi Aqsan — Junior Software Developer & IT Support"
+  description="Portfolio of Muhammad Raffi Aqsan — Junior Software Developer & IT Support Technician from Indonesia with 6 months internship experience at BRIN. Specializing in modern web applications (React, Next.js, Astro, Laravel, Express) and IT systems troubleshooting."
+>
+  <HeroSection />
+  <ProjectsSection projects={featuredProjects} />
+  <MarqueeSection />
+  <BlogSection posts={latestPosts} />
+  <CtaSection />
 </Layout>
+
+<script>
+  import gsap from 'gsap';
+  import ScrollTrigger from 'gsap/ScrollTrigger';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  document.addEventListener('astro:page-load', () => {
+    // ── Advanced Scroll Velocity Skew (for Project Cards) ──
+    const projectCards = document.querySelectorAll('.project-card');
+    if (projectCards.length > 0) {
+      let proxy = { skew: 0 };
+      const skewSetter = gsap.quickSetter(projectCards, "skewY", "deg");
+      const clamp = gsap.utils.clamp(-5, 5);
+
+      const velocityTrigger = ScrollTrigger.create({
+        onUpdate: (self) => {
+          let skew = clamp(self.getVelocity() / -300);
+          
+          if (Math.abs(skew) > Math.abs(proxy.skew)) {
+            proxy.skew = skew;
+            gsap.to(proxy, {
+              skew: 0,
+              duration: 0.8,
+              ease: "power3",
+              overwrite: true,
+              onUpdate: () => skewSetter(proxy.skew)
+            });
+          }
+        }
+      });
+
+      // Cleanup
+      document.addEventListener('astro:before-swap', () => {
+        velocityTrigger.kill();
+      }, { once: true });
+    }
+  });
+</script>

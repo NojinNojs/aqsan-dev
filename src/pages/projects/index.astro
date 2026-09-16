@@ -1,0 +1,464 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+import ProjectCard from '../../components/ProjectCard.astro';
+import { Icon } from 'astro-icon/components';
+import { mailtoHref } from '../../lib/site';
+
+const projects = await getCollection('projects');
+const sortedProjects = projects.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+// Collect unique tech categories
+const categories = ['All', 'Fullstack', 'Frontend', 'Backend'];
+---
+
+<Layout 
+  title="Projects & Portfolio | Fullstack Web Applications"
+  description="Explore web development projects, fullstack applications, and technical work built by Muhammad Raffi Aqsan."
+>
+  <section class="section container page-top">
+    <div class="page-header gs-reveal-header">
+      <div class="header-top">
+        <span class="label">Featured Work</span>
+        <span class="project-count mono">{sortedProjects.length} Projects Shipped</span>
+      </div>
+      <h1 class="heading-1 page-title">Selected<br/>Projects</h1>
+      <p class="body-lg page-desc">
+        A breakdown of web applications, client products, and engineering projects I've built. Focused on clean architecture, performance, and practical user experience.
+      </p>
+
+      {sortedProjects.length > 0 && (
+        <div class="filter-scroll-wrapper">
+          <div class="project-filters" role="tablist" aria-label="Filter projects">
+            {categories.map((cat, i) => (
+              <button 
+                class={`filter-tab ${i === 0 ? 'active' : ''}`}
+                data-filter={cat.toLowerCase()}
+                role="tab"
+                aria-selected={i === 0 ? 'true' : 'false'}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+
+    {sortedProjects.length > 0 ? (
+      <div class="projects-grid">
+        {sortedProjects.map((project, i) => {
+          const stackStr = project.data.techStack.join(' ').toLowerCase();
+          let cat = 'fullstack';
+          if (stackStr.includes('astro') && !stackStr.includes('laravel') && !stackStr.includes('node')) {
+            cat = 'frontend';
+          } else if (stackStr.includes('laravel') || stackStr.includes('express') || stackStr.includes('postgresql')) {
+            cat = 'backend';
+          }
+
+          return (
+            <div 
+              class="project-item" 
+              data-cat={cat}
+              data-stack={stackStr}
+              data-animate="fade-up" 
+              data-delay={i * 0.1}
+            >
+              <ProjectCard project={project} index={i} />
+            </div>
+          );
+        })}
+      </div>
+    ) : (
+      <div class="empty-state-box" data-animate="fade-up">
+        <div class="empty-icon-bubble">
+          <Icon name="lucide:folder-git-2" class="empty-icon" />
+        </div>
+        <h3 class="heading-3 empty-title">Case Studies in Progress</h3>
+        <p class="body-sm empty-desc">
+          Production web applications and client projects are currently being curated and documented. They will be published here soon.
+        </p>
+        <div class="empty-actions">
+          <a href="/services" class="btn btn-primary">
+            Explore Services <Icon name="lucide:arrow-right" />
+          </a>
+          {mailtoHref && (
+            <a href={mailtoHref} class="btn btn-outline">
+              Request Private Demos
+            </a>
+          )}
+        </div>
+      </div>
+    )}
+  </section>
+</Layout>
+
+<script>
+  import gsap from 'gsap';
+  import ScrollTrigger from 'gsap/ScrollTrigger';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  document.addEventListener('astro:page-load', () => {
+    // ── Header Reveal with fromTo + clearProps (Never gets stuck faded) ──
+    if (document.querySelector('.gs-reveal-header')) {
+      gsap.fromTo('.page-header .header-top', 
+        { y: 15, autoAlpha: 0 }, 
+        { y: 0, autoAlpha: 1, duration: 0.6, ease: 'power2.out', clearProps: 'all' }
+      );
+      gsap.fromTo('.page-header .page-title', 
+        { y: 25, autoAlpha: 0 }, 
+        { y: 0, autoAlpha: 1, duration: 0.7, delay: 0.08, ease: 'power3.out', clearProps: 'all' }
+      );
+      gsap.fromTo('.page-header .page-desc', 
+        { y: 20, autoAlpha: 0 }, 
+        { y: 0, autoAlpha: 1, duration: 0.6, delay: 0.15, ease: 'power2.out', clearProps: 'all' }
+      );
+      gsap.fromTo('.filter-scroll-wrapper', 
+        { y: 15, autoAlpha: 0 }, 
+        { y: 0, autoAlpha: 1, duration: 0.5, delay: 0.2, ease: 'power2.out', clearProps: 'all' }
+      );
+    }
+
+    // ── Horizontal Scroll Mask & Drag-to-Scroll Affordance ──
+    const filterContainer = document.querySelector<HTMLElement>('.project-filters');
+    if (filterContainer) {
+      const updateMask = () => {
+        const hasOverflow = filterContainer.scrollWidth > filterContainer.clientWidth + 2;
+        if (!hasOverflow) {
+          filterContainer.style.maskImage = 'none';
+          filterContainer.style.webkitMaskImage = 'none';
+          return;
+        }
+
+        const isAtStart = filterContainer.scrollLeft <= 4;
+        const isAtEnd = filterContainer.scrollLeft >= (filterContainer.scrollWidth - filterContainer.clientWidth - 4);
+
+        let mask = '';
+        if (isAtStart) {
+          mask = 'linear-gradient(to right, black 0%, black calc(100% - 36px), transparent 100%)';
+        } else if (isAtEnd) {
+          mask = 'linear-gradient(to right, transparent 0%, black 36px, black 100%)';
+        } else {
+          mask = 'linear-gradient(to right, transparent 0%, black 32px, black calc(100% - 32px), transparent 100%)';
+        }
+        filterContainer.style.maskImage = mask;
+        filterContainer.style.webkitMaskImage = mask;
+      };
+
+      filterContainer.addEventListener('scroll', updateMask, { passive: true });
+      window.addEventListener('resize', updateMask);
+      updateMask();
+
+      // Subtle initial hint nudge on mobile so users immediately know it scrolls
+      if (filterContainer.scrollWidth > filterContainer.clientWidth) {
+        gsap.to(filterContainer, {
+          scrollLeft: 26,
+          duration: 0.45,
+          delay: 0.7,
+          ease: 'power2.out',
+          yoyo: true,
+          repeat: 1,
+          onUpdate: updateMask
+        });
+      }
+
+      // Mouse drag to scroll (desktop / trackpad)
+      let isDown = false;
+      let startX = 0;
+      let scrollLeft = 0;
+
+      filterContainer.addEventListener('mousedown', (e: MouseEvent) => {
+        isDown = true;
+        filterContainer.classList.add('is-dragging');
+        startX = e.pageX - filterContainer.offsetLeft;
+        scrollLeft = filterContainer.scrollLeft;
+      });
+
+      window.addEventListener('mouseup', () => {
+        if (!isDown) return;
+        isDown = false;
+        filterContainer.classList.remove('is-dragging');
+      });
+
+      filterContainer.addEventListener('mousemove', (e: MouseEvent) => {
+        if (!isDown) return;
+        e.preventDefault();
+        const x = e.pageX - filterContainer.offsetLeft;
+        const walk = (x - startX) * 1.4;
+        filterContainer.scrollLeft = scrollLeft - walk;
+        updateMask();
+      });
+    }
+
+    // ── Buttery Smooth Coordinated Tab Content Transition ──
+    const filterTabs = document.querySelectorAll<HTMLButtonElement>('.filter-tab');
+    const projectItems = document.querySelectorAll<HTMLElement>('.project-item');
+    const projectsGrid = document.querySelector<HTMLElement>('.projects-grid');
+    let isTransitioning = false;
+
+    filterTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        if (tab.classList.contains('active') || isTransitioning) return;
+        const filter = tab.getAttribute('data-filter');
+        if (!filter || !projectsGrid) return;
+
+        // Update active tab button
+        filterTabs.forEach(t => {
+          t.classList.remove('active');
+          t.setAttribute('aria-selected', 'false');
+        });
+        tab.classList.add('active');
+        tab.setAttribute('aria-selected', 'true');
+
+        // Smoothly center the clicked tab in view
+        tab.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+
+        isTransitioning = true;
+
+        // Step 1: Smoothly fade current cards out (No layout jump)
+        gsap.to(projectsGrid, {
+          autoAlpha: 0,
+          y: -6,
+          duration: 0.16,
+          ease: 'power2.in',
+          onComplete: () => {
+            // Step 2: Toggle display states cleanly
+            const matchingItems: HTMLElement[] = [];
+            projectItems.forEach(item => {
+              const itemStack = item.getAttribute('data-stack') || '';
+              
+              let matches = filter === 'all';
+              if (filter === 'fullstack') matches = true;
+              if (filter === 'frontend') matches = itemStack.includes('react') || itemStack.includes('next') || itemStack.includes('astro');
+              if (filter === 'backend') matches = itemStack.includes('laravel') || itemStack.includes('node') || itemStack.includes('postgresql') || itemStack.includes('supabase');
+
+              if (matches) {
+                item.style.display = 'block';
+                matchingItems.push(item);
+              } else {
+                item.style.display = 'none';
+              }
+            });
+
+            // Step 3: Set initial state for matching items
+            gsap.set(matchingItems, { autoAlpha: 0, y: 16, scale: 0.98 });
+
+            // Step 4: Stagger matching items in smoothly
+            gsap.to(projectsGrid, {
+              autoAlpha: 1,
+              y: 0,
+              duration: 0.2,
+              ease: 'power2.out'
+            });
+
+            gsap.to(matchingItems, {
+              autoAlpha: 1,
+              y: 0,
+              scale: 1,
+              duration: 0.38,
+              stagger: 0.05,
+              ease: 'power3.out',
+              clearProps: 'transform,opacity,visibility',
+              onComplete: () => {
+                isTransitioning = false;
+              }
+            });
+          }
+        });
+      });
+    });
+  });
+</script>
+
+<style>
+  .page-header {
+    margin-bottom: var(--space-4xl);
+    max-width: 1000px;
+  }
+
+  .header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-md);
+  }
+
+  .project-count {
+    font-size: 0.8125rem;
+    color: var(--text-muted);
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--border);
+    background: var(--surface);
+  }
+
+  .page-desc {
+    margin-top: var(--space-lg);
+    max-width: 760px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+  }
+
+  /* Filters */
+  .filter-scroll-wrapper {
+    position: relative;
+    width: fit-content;
+    max-width: 100%;
+    margin-top: var(--space-2xl);
+  }
+
+  .project-filters {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.375rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-full);
+    width: fit-content;
+    max-width: 100%;
+    box-shadow: var(--shadow-sm);
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    cursor: grab;
+    user-select: none;
+    transition: border-color 0.3s ease;
+  }
+
+  .project-filters.is-dragging {
+    cursor: grabbing;
+    scroll-behavior: auto;
+  }
+
+  .project-filters::-webkit-scrollbar {
+    display: none;
+  }
+
+  .filter-tab {
+    appearance: none;
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    padding: 0.45rem 1.15rem;
+    border-radius: var(--radius-full);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: background-color 0.25s ease, color 0.25s ease, transform 0.15s ease;
+  }
+
+  .filter-tab:hover {
+    color: var(--text-primary);
+  }
+
+  .filter-tab:active {
+    transform: scale(0.96);
+  }
+
+  .filter-tab.active {
+    background: var(--text-primary);
+    color: var(--text-inverse);
+    box-shadow: var(--shadow-sm);
+  }
+
+  /* Grid */
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    gap: var(--space-2xl);
+  }
+
+  .project-item {
+    display: block;
+    height: 100%;
+  }
+
+  @media (max-width: 768px) {
+    .projects-grid {
+      grid-template-columns: 1fr;
+      gap: var(--space-xl);
+    }
+
+    .filter-scroll-wrapper {
+      width: 100%;
+    }
+
+    .project-filters {
+      width: 100%;
+      flex-wrap: nowrap;
+    }
+
+    .filter-tab {
+      padding: 0.4rem 1rem;
+      font-size: 0.75rem;
+    }
+
+    .empty-state-box {
+      padding: var(--space-3xl) var(--space-xl);
+    }
+
+    .empty-actions {
+      flex-direction: column;
+      width: 100%;
+    }
+
+    .empty-actions :global(.btn) {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+
+  /* Empty State */
+  .empty-state-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: var(--space-4xl) var(--space-2xl);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-2xl);
+    max-width: 680px;
+    margin: 0 auto;
+  }
+
+  .empty-icon-bubble {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent);
+    margin-bottom: var(--space-xl);
+  }
+
+  .empty-icon {
+    width: 28px;
+    height: 28px;
+  }
+
+  .empty-title {
+    margin-bottom: var(--space-sm);
+  }
+
+  .empty-desc {
+    max-width: 480px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin-bottom: var(--space-2xl);
+  }
+
+  .empty-actions {
+    display: flex;
+    gap: var(--space-md);
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+</style>

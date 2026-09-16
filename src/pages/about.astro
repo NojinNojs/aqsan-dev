@@ -1,0 +1,69 @@
+---
+import Layout from '../layouts/Layout.astro';
+import AboutHero from '../components/organisms/about/AboutHero.astro';
+import AboutStory from '../components/organisms/about/AboutStory.astro';
+import AboutPhilosophy from '../components/organisms/about/AboutPhilosophy.astro';
+import AboutValues from '../components/organisms/about/AboutValues.astro';
+import AboutSkills from '../components/organisms/about/AboutSkills.astro';
+import AboutTimeline from '../components/organisms/about/AboutTimeline.astro';
+import CtaSection from '../components/organisms/CtaSection.astro';
+
+const skills = {
+  frontend: ['React', 'Next.js', 'Astro', 'TypeScript', 'Tailwind CSS', 'GSAP'],
+  backend: ['Node.js', 'Express', 'Laravel', 'PHP', 'PostgreSQL', 'MySQL', 'MongoDB', 'Supabase', 'REST API'],
+  tools: ['Git', 'Docker', 'Figma', 'Vercel', 'Linux', 'CI/CD'],
+};
+
+const values = [
+  { icon: 'lucide:code-2', title: 'Clean Architecture', desc: 'Code should be easy for the next person to read and maintain. I avoid over-engineering and stick to solid, predictable patterns.' },
+  { icon: 'lucide:zap', title: 'Performance', desc: 'Nobody likes waiting for slow pages. I keep bundle sizes small, optimize assets, and make sure interactions respond instantly.' },
+  { icon: 'lucide:layers', title: 'Attention to Detail', desc: 'Good UI is in the subtle things: consistent spacing, sensible error states, and interactions that feel natural on any screen.' },
+  { icon: 'lucide:shield-check', title: 'Dependability', desc: 'Clear communication, realistic estimates, and software that actually works when it reaches users.' },
+];
+
+const timeline = [
+  { 
+    year: '2026 — Present', 
+    status: 'Active',
+    statusLabel: 'Open for Opportunities',
+    role: 'Junior Developer & IT Support',
+    org: 'Independent / Freelance',
+    location: 'Indonesia (UTC+7) · Remote / On-site',
+    desc: 'Actively seeking junior full-time, internship, or freelance opportunities across software engineering, web development, and IT support. Shipping web applications across React, Next.js, Astro, and Express while learning systems & security.',
+    tags: ['Fullstack Web', 'IT Support', 'React & Next.js', 'Express', 'Astro', 'Cybersecurity', 'Web3']
+  },
+  { 
+    year: 'Jul — Dec 2025', 
+    status: 'Completed',
+    statusLabel: '6-Month Internship',
+    role: 'IT Support & Web Development Intern',
+    org: 'BRIN (Pusdatin, Gatot Subroto)',
+    location: 'Jakarta, Indonesia',
+    desc: 'Completed a 6-month on-site industry internship at the National Research and Innovation Agency. Handled ~80% hardware troubleshooting, OS setups, and local network diagnostics, with ~20% maintaining internal web tools.',
+    tags: ['Hardware Diagnostics', 'LAN / Networking', 'PC Maintenance', 'Internal Web Tools', 'User Support']
+  },
+  { 
+    year: 'Jul 2023 — May 2026', 
+    status: 'Education',
+    statusLabel: 'Vocational High School',
+    role: 'Vocational Student in Software Engineering',
+    org: 'Vocational High School (SMK)',
+    location: 'Indonesia',
+    desc: 'Three years of practical software engineering curriculum. Mastered relational database design, SQL queries, RESTful APIs, and fullstack MVC architecture by building projects like an e-commerce platform with dynamic admin panels.',
+    tags: ['PHP & Laravel', 'MySQL', 'Relational DB', 'MVC Architecture', 'REST APIs', 'Git']
+  },
+];
+---
+
+<Layout 
+  title="About Me | Background & Story"
+  description="Learn more about Muhammad Raffi Aqsan — Junior Software Developer & IT Support Technician with vocational software engineering background and 6 months at BRIN."
+>
+  <AboutHero />
+  <AboutStory />
+  <AboutPhilosophy />
+  <AboutValues values={values} />
+  <AboutSkills skills={skills} />
+  <AboutTimeline timeline={timeline} />
+  <CtaSection buttonText="Get in Touch" />
+</Layout>

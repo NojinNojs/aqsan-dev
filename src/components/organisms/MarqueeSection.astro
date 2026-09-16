@@ -1,0 +1,124 @@
+---
+const technologies1 = [
+  'React', 'Next.js', 'Astro', 'TypeScript', 'Node.js', 
+  'React', 'Next.js', 'Astro', 'TypeScript', 'Node.js'
+];
+const technologies2 = [
+  'PostgreSQL', 'Tailwind', 'GSAP', 'Laravel', 'Docker',
+  'PostgreSQL', 'Tailwind', 'GSAP', 'Laravel', 'Docker'
+];
+---
+
+<section class="marquee-section" aria-hidden="true">
+  <div class="marquee-wrapper">
+    <div class="marquee-track track-left">
+      <div class="marquee-content">
+        {technologies1.map((tech, i) => (
+          <span class={`marquee-item ${i % 2 !== 0 ? 'outline-text' : ''}`}>{tech}</span>
+        ))}
+      </div>
+    </div>
+    <div class="marquee-track track-right">
+      <div class="marquee-content">
+        {technologies2.map((tech, i) => (
+          <span class={`marquee-item ${i % 2 === 0 ? 'outline-text' : ''}`}>{tech}</span>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  import gsap from 'gsap';
+  import ScrollTrigger from 'gsap/ScrollTrigger';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  document.addEventListener('astro:page-load', () => {
+    if (!document.querySelector('.marquee-section')) return;
+
+    // Scroll-linked marquee effect
+    gsap.to('.track-left', {
+      xPercent: -20,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: '.marquee-section',
+        start: 'top bottom',
+        end: 'bottom top',
+        scrub: 1
+      }
+    });
+
+    gsap.to('.track-right', {
+      xPercent: 20,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: '.marquee-section',
+        start: 'top bottom',
+        end: 'bottom top',
+        scrub: 1
+      }
+    });
+  });
+</script>
+
+<style>
+  /* ── Marquee ── */
+  .marquee-section {
+    padding: var(--space-3xl) 0;
+    overflow: hidden;
+    background: var(--bg-primary);
+    position: relative;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .marquee-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xl);
+  }
+
+  .marquee-track {
+    display: flex;
+    width: max-content;
+  }
+
+  .track-right {
+    transform: translateX(-10%); /* Subtle offset */
+  }
+
+  .marquee-content {
+    display: flex;
+    align-items: center; /* Fix text jumping vertically */
+    gap: var(--space-2xl);
+    padding-right: var(--space-2xl);
+  }
+
+  .marquee-item {
+    font-size: clamp(3rem, 8vw, 8rem); /* Prevent being too huge and clipping */
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    color: var(--text-primary);
+    white-space: nowrap;
+    line-height: 1;
+  }
+
+  .outline-text {
+    color: transparent;
+    -webkit-text-stroke: 1.5px var(--text-secondary); /* Thinner stroke for legibility */
+  }
+
+  @media (max-width: 768px) {
+    .marquee-section {
+      padding: var(--space-2xl) 0;
+    }
+    .marquee-item {
+      font-size: clamp(2.5rem, 6vw, 4rem);
+    }
+    .outline-text {
+      -webkit-text-stroke: 1px var(--text-secondary);
+    }
+  }
+</style>

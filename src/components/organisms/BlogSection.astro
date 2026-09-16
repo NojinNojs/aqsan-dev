@@ -1,0 +1,206 @@
+---
+import BlogCard from '../BlogCard.astro';
+import { Icon } from 'astro-icon/components';
+
+interface Props {
+  posts: any[];
+}
+
+const { posts } = Astro.props;
+---
+
+<section class="section container" id="blog-section">
+  <div class="section-header-huge" data-animate="fade-up">
+    <div class="header-titles">
+      <h2 class="huge-heading">
+        <span class="huge-line">RECENT</span>
+        <span class="huge-line outline-text">ARTICLES</span>
+      </h2>
+    </div>
+    <a href="/blog" class="link-arrow">
+      Read all <Icon name="lucide:arrow-right" />
+    </a>
+  </div>
+
+  {posts.length > 0 ? (
+    <div class="blog-grid">
+      {posts.map((post, i) => (
+        <div data-animate="fade-up" data-delay={i * 0.1}>
+          <BlogCard post={post} />
+        </div>
+      ))}
+    </div>
+  ) : (
+    <div class="empty-preview-card" data-animate="fade-up">
+      <div class="preview-inner">
+        <span class="label">Field Notes</span>
+        <h3 class="heading-3 preview-title">Technical articles and guides coming soon</h3>
+        <p class="body-sm preview-desc">
+          Writing in-depth breakdowns on web architecture, performance, database decisions, and real-world lessons. Check back shortly.
+        </p>
+        <div class="preview-actions">
+          <a href="/about" class="btn btn-primary btn-sm">
+            About Me <Icon name="lucide:arrow-right" />
+          </a>
+          <a href="/services" class="btn btn-outline btn-sm">
+            View Capabilities
+          </a>
+        </div>
+      </div>
+    </div>
+  )}
+</section>
+
+<style>
+  #blog-section {
+    padding-top: var(--space-4xl);
+  }
+
+  .section-header-huge {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: var(--space-4xl);
+    gap: var(--space-xl);
+  }
+
+  .huge-heading {
+    display: flex;
+    flex-direction: column;
+    line-height: 1;
+  }
+
+  .huge-line {
+    font-size: clamp(3rem, 8vw, 8rem);
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    color: var(--text-primary);
+    padding-top: 0.1em;
+  }
+
+  .outline-text {
+    color: transparent;
+    -webkit-text-stroke: 2px var(--text-primary);
+    margin-left: 1em; /* Staggered */
+  }
+
+  .link-arrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    white-space: nowrap;
+    transition: color 0.3s ease, gap 0.3s var(--ease-out-expo);
+    padding-bottom: var(--space-md);
+  }
+
+  @media (hover: hover) {
+    .link-arrow:hover {
+      color: var(--text-primary);
+      gap: 0.75rem;
+    }
+  }
+
+  .blog-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-xl);
+  }
+
+  @media (max-width: 1024px) and (min-width: 769px) {
+    .blog-grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-md);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .section-header-huge {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--space-xl);
+      margin-bottom: var(--space-3xl);
+    }
+    
+    .outline-text {
+      margin-left: 0;
+      -webkit-text-stroke: 1px var(--text-primary);
+    }
+
+    .blog-grid {
+      display: flex;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scroll-padding: 0;
+      padding-bottom: var(--space-xl);
+      
+      margin-inline: calc(-1 * max(1.25rem, 4vw));
+      padding-inline: max(1.25rem, 4vw);
+      gap: var(--space-md);
+      
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+
+    .blog-grid::-webkit-scrollbar {
+      display: none;
+    }
+
+    .blog-grid > div {
+      flex: 0 0 85%;
+      scroll-snap-align: center;
+    }
+
+    .empty-preview-card {
+      padding: var(--space-2xl) var(--space-lg);
+    }
+
+    .preview-actions {
+      flex-direction: column;
+      width: 100%;
+    }
+
+    .preview-actions :global(.btn) {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+
+  /* Empty State Preview */
+  .empty-preview-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-2xl);
+    padding: var(--space-3xl) var(--space-2xl);
+    text-align: center;
+    max-width: 760px;
+    margin: 0 auto;
+  }
+
+  .preview-inner .label {
+    margin-bottom: var(--space-sm);
+    display: inline-block;
+  }
+
+  .preview-title {
+    margin-bottom: var(--space-md);
+  }
+
+  .preview-desc {
+    max-width: 540px;
+    margin: 0 auto var(--space-2xl);
+    color: var(--text-secondary);
+    line-height: 1.7;
+  }
+
+  .preview-actions {
+    display: flex;
+    gap: var(--space-md);
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+</style>

@@ -1,0 +1,154 @@
+<!-- Custom cursor that follows mouse with smooth trailing effect -->
+<div id="cursor-dot" class="cursor-dot" aria-hidden="true" transition:persist>
+  <span class="cursor-text"></span>
+</div>
+<div id="cursor-ring" class="cursor-ring" aria-hidden="true" transition:persist></div>
+
+<style>
+  .cursor-dot,
+  .cursor-ring {
+    position: fixed;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 10000;
+    border-radius: 50%;
+    opacity: 0;
+  }
+
+  .cursor-dot {
+    width: 6px;
+    height: 6px;
+    background: var(--accent);
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: width 0.4s var(--ease-out-expo), height 0.4s var(--ease-out-expo), background-color 0.4s ease;
+  }
+
+  .cursor-text {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-inverse);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .cursor-dot.has-text {
+    width: 80px;
+    height: 80px;
+    background: var(--accent);
+    box-shadow: var(--shadow-glow);
+  }
+
+  .cursor-dot.has-text .cursor-text {
+    opacity: 1;
+  }
+
+  .cursor-ring {
+    width: 36px;
+    height: 36px;
+    border: 1.5px solid var(--accent);
+    transform: translate(-50%, -50%);
+    transition: width 0.3s var(--ease-out-expo),
+                height 0.3s var(--ease-out-expo),
+                opacity 0.3s ease,
+                border-color 0.3s ease;
+  }
+
+  .cursor-ring.hovering {
+    width: 64px;
+    height: 64px;
+    border-color: var(--text-muted);
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(2px);
+  }
+
+  /* Hide custom cursor on touch devices, mobile screens, and when reduced motion */
+  @media (hover: none), (pointer: coarse), (max-width: 768px) {
+    .cursor-dot, .cursor-ring { display: none !important; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cursor-dot, .cursor-ring { display: none !important; }
+  }
+
+  /* Hide default cursor globally when custom cursor is active */
+  :global(html.has-custom-cursor),
+  :global(html.has-custom-cursor *) {
+    cursor: none !important;
+  }
+</style>
+
+<script>
+  import gsap from 'gsap';
+
+  const dot = document.getElementById('cursor-dot');
+  const ring = document.getElementById('cursor-ring');
+  const cursorText = dot?.querySelector('.cursor-text');
+
+  if (dot && ring && window.matchMedia('(hover: hover)').matches) {
+    document.documentElement.classList.add('has-custom-cursor');
+
+    let mouseX = 0, mouseY = 0;
+
+    document.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      gsap.to(dot, { x: mouseX, y: mouseY, duration: 0.15, ease: 'power2.out' });
+      gsap.to(ring, { x: mouseX, y: mouseY, duration: 0.4, ease: 'power3.out' });
+      
+      // Only set opacity if we aren't leaving the window
+      if (!dot.classList.contains('hidden')) {
+        dot.style.opacity = '1';
+        ring.style.opacity = '0.5';
+      }
+    });
+
+    document.addEventListener('mouseleave', () => {
+      dot.classList.add('hidden');
+      dot.style.opacity = '0';
+      ring.style.opacity = '0';
+    });
+    
+    document.addEventListener('mouseenter', () => {
+      dot.classList.remove('hidden');
+    });
+
+    // Re-apply interactive hover listeners on every page load (for view transitions)
+    const bindCursorListeners = () => {
+      document.documentElement.classList.add('has-custom-cursor'); 
+      
+      // Standard interactive elements
+      const interactives = document.querySelectorAll('a:not([data-cursor]), button:not([data-cursor]), input, textarea, select');
+      interactives.forEach(el => {
+        el.addEventListener('mouseenter', () => ring.classList.add('hovering'));
+        el.addEventListener('mouseleave', () => ring.classList.remove('hovering'));
+      });
+
+      // Special elements with contextual text
+      const contextuals = document.querySelectorAll('[data-cursor]');
+      contextuals.forEach(el => {
+        el.addEventListener('mouseenter', () => {
+          const text = el.getAttribute('data-cursor');
+          if (text && cursorText) {
+            cursorText.textContent = text;
+            dot.classList.add('has-text');
+            ring.style.opacity = '0'; // Hide ring when dot expands
+          }
+        });
+        el.addEventListener('mouseleave', () => {
+          dot.classList.remove('has-text');
+          if (cursorText) cursorText.textContent = '';
+          ring.style.opacity = '0.5';
+        });
+      });
+    };
+
+    document.addEventListener('astro:page-load', bindCursorListeners);
+    bindCursorListeners(); 
+  }
+</script>
