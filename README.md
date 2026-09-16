@@ -213,7 +213,7 @@ This site builds to pure static HTML/CSS/JS and can be deployed anywhere without
 
 ## 📬 Connect
 
-- **Website**: [aqsan.dev](https://aqsan.dev)
+- **Website**: [aqsan.dev](https://aqsan.vercel.app)
 - **GitHub**: [@NojinNojs](https://github.com/NojinNojs)
 - **LinkedIn**: [Muhammad Raffi Aqsan](https://www.linkedin.com/in/raffiaqsan/)
 - **Email**: [aqsan@proton.me](mailto:aqsan@proton.me)

@@ -5,10 +5,10 @@ import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
 export default defineConfig({
-  site: process.env.PUBLIC_SITE_URL || 'https://aqsan.dev',
+  site: process.env.PUBLIC_SITE_URL || 'https://aqsan.vercel.app',
   env: {
     schema: {
-      PUBLIC_SITE_URL: envField.string({ context: 'client', access: 'public', optional: true, default: 'https://aqsan.dev' }),
+      PUBLIC_SITE_URL: envField.string({ context: 'client', access: 'public', optional: true, default: 'https://aqsan.vercel.app' }),
       PUBLIC_EMAIL: envField.string({ context: 'client', access: 'public', optional: true }),
       PUBLIC_GITHUB_URL: envField.string({ context: 'client', access: 'public', optional: true }),
       PUBLIC_LINKEDIN_URL: envField.string({ context: 'client', access: 'public', optional: true }),
